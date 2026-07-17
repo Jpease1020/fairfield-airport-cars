@@ -13,6 +13,9 @@ export const QuoteSchema = z.object({
   dropoffCoords: z.object({ lat: z.number(), lng: z.number() }),
   estimatedMiles: z.number().min(0),
   estimatedMinutes: z.number().min(0),
+  // Traffic-adjusted duration used for pricing and the availability check at quote time.
+  // Optional so quotes created before this field existed still parse.
+  durationTrafficMinutes: z.number().min(0).optional(),
   price: z.number().min(0),
   fareType: z.enum(['personal', 'business']),
   pickupDateTime: z.date(), // When the ride is scheduled (required)
@@ -54,6 +57,7 @@ export const createQuote = async (quoteData: Omit<Quote, 'id' | 'createdAt' | 'u
       estimatedMiles: quoteData.estimatedMiles,
       estimatedMinutes: quoteData.estimatedMinutes,
       price: quoteData.price,
+      ...(quoteData.durationTrafficMinutes !== undefined && { durationTrafficMinutes: quoteData.durationTrafficMinutes }),
       fareType: quoteData.fareType,
       expiresAt: quoteData.expiresAt,
     };

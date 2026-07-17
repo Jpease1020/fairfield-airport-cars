@@ -173,6 +173,7 @@ export async function POST(request: Request) {
       dropoffCoords: dropoffCoords || { lat: 0, lng: 0 }, // Fallback if no coords
       estimatedMiles: Math.round(distanceMiles * 100) / 100,
       estimatedMinutes: Math.round(durationMinutes),
+      durationTrafficMinutes: Math.round(durationTrafficMinutes),
       price: fare,
       fareType,
       pickupDateTime, // Required - validated above

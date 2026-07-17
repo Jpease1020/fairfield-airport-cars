@@ -206,22 +206,47 @@ export class DriverSchedulingService {
         driverName: string;
       }> = [];
 
-      // Use Admin SDK if available (server-side), otherwise client SDK
-      let scheduleSnapshot;
-      try {
+      const MINUTES_PER_DAY = 24 * 60;
+      const requestedStart = this.timeToMinutes(startTime);
+      const requestedEndRaw = this.timeToMinutes(endTime);
+      // Placed on an absolute two-day timeline (pickup date = [0, 1440)) so a ride or its prep
+      // window can be compared directly against slots from an adjacent day's schedule doc, since
+      // driverSchedules documents are keyed to a single calendar date and a wrapping range's
+      // "next day" portion is a genuine conflict against tomorrow's bookings, not today's.
+      const requestedEnd = requestedEndRaw < requestedStart ? requestedEndRaw + MINUTES_PER_DAY : requestedEndRaw;
+
+      // Also check prep time (1 hour before pickup) for conflicts
+      const prepStartTime = this.subtractHours(startTime, 1);
+      const prepStartRaw = this.timeToMinutes(prepStartTime);
+      const prepEnd = requestedStart;
+      const prepStart = prepStartRaw > prepEnd ? prepStartRaw - MINUTES_PER_DAY : prepStartRaw;
+
+      const needsNextDay = requestedEnd > MINUTES_PER_DAY;
+      const needsPrevDay = prepStart < 0;
+      const nextDate = needsNextDay ? this.addOneCalendarDay(date) : null;
+      const prevDate = needsPrevDay ? this.subtractOneCalendarDay(date) : null;
+      const datesToQuery = [date, nextDate, prevDate].filter((d): d is string => d !== null);
+
+      const getDocsForDate = async (d: string): Promise<any[]> => {
         if (typeof window === 'undefined' && db.collection) {
           // Admin SDK (server-side)
-          scheduleSnapshot = await db.collection('driverSchedules')
-            .where('date', '==', date)
-            .get();
-        } else {
-          // Client SDK
-          const scheduleQuery = query(
-            collection(db, 'driverSchedules'),
-            where('date', '==', date)
-          );
-          scheduleSnapshot = await getDocs(scheduleQuery);
+          const snap = await db.collection('driverSchedules').where('date', '==', d).get();
+          return snap.docs || [];
         }
+        // Client SDK
+        const scheduleQuery = query(collection(db, 'driverSchedules'), where('date', '==', d));
+        const snap = await getDocs(scheduleQuery);
+        return snap.docs || [];
+      };
+
+      let docsByDate: Array<{ dayOffset: number; docs: any[] }>;
+      try {
+        docsByDate = await Promise.all(
+          datesToQuery.map(async (d) => ({
+            dayOffset: d === date ? 0 : d === nextDate ? MINUTES_PER_DAY : -MINUTES_PER_DAY,
+            docs: await getDocsForDate(d),
+          }))
+        );
       } catch (dbError: any) {
         // If database query fails (e.g., permission denied, credential error), fail gracefully
         console.error('Error querying driver schedules:', dbError);
@@ -233,55 +258,46 @@ export class DriverSchedulingService {
           suggestedTimeSlots: []
         };
       }
-      
-      const requestedStart = this.timeToMinutes(startTime);
-      const requestedEnd = this.timeToMinutes(endTime);
-      const MINUTES_PER_DAY = 24 * 60;
 
-      // Also check prep time (1 hour before pickup) for conflicts
-      const prepStartTime = this.subtractHours(startTime, 1);
-      const prepStart = this.timeToMinutes(prepStartTime);
-      const prepEnd = requestedStart;
+      for (const { dayOffset, docs } of docsByDate) {
+        for (const scheduleDoc of docs) {
+          const scheduleData = scheduleDoc.data ? scheduleDoc.data() : scheduleDoc;
+          const schedule = scheduleData as DriverSchedule;
 
-      // Handle both Admin SDK (docs array) and Client SDK (docs array) formats
-      const docs = scheduleSnapshot.docs || [];
-      for (const scheduleDoc of docs) {
-        const scheduleData = scheduleDoc.data ? scheduleDoc.data() : scheduleDoc;
-        const schedule = scheduleData as DriverSchedule;
+          for (const slot of schedule.timeSlots) {
+            // Check both booked and prep slots for conflicts
+            if ((slot.status === 'booked' || slot.status === 'prep') && slot.bookingId !== excludeBookingId) {
+              const slotStartRaw = this.timeToMinutes(slot.startTime);
+              const slotEndRaw = this.timeToMinutes(slot.endTime);
+              const slotStart = dayOffset + slotStartRaw;
+              const slotEnd = dayOffset + (slotEndRaw < slotStartRaw ? slotEndRaw + MINUTES_PER_DAY : slotEndRaw);
 
-        for (const slot of schedule.timeSlots) {
-          // Check both booked and prep slots for conflicts
-          if ((slot.status === 'booked' || slot.status === 'prep') && slot.bookingId !== excludeBookingId) {
-            const slotStart = this.timeToMinutes(slot.startTime);
-            const slotEnd = this.timeToMinutes(slot.endTime);
+              // Check for overlap with actual ride time, on the shared absolute timeline.
+              if (requestedStart < slotEnd && slotStart < requestedEnd) {
+                conflicts.push({
+                  bookingId: slot.bookingId!,
+                  customerName: slot.customerName!,
+                  timeSlot: `${slot.startTime}-${slot.endTime}`,
+                  driverName: schedule.driverName
+                });
+              }
 
-            // Check for overlap with actual ride time. Both sides may span midnight (a slot
-            // ending after midnight, or — since ride duration now reflects the real quoted trip
-            // length, not a flat 2 hours — the requested range itself for a late-evening pickup).
-            if (timeRangesOverlap(requestedStart, requestedEnd, slotStart, slotEnd, MINUTES_PER_DAY)) {
-              conflicts.push({
-                bookingId: slot.bookingId!,
-                customerName: slot.customerName!,
-                timeSlot: `${slot.startTime}-${slot.endTime}`,
-                driverName: schedule.driverName
-              });
-            }
-
-            // Check for overlap with prep time (handles prep, slot, or both spanning midnight)
-            if (timeRangesOverlap(prepStart, prepEnd, slotStart, slotEnd, MINUTES_PER_DAY)) {
-              conflicts.push({
-                bookingId: slot.bookingId!,
-                customerName: slot.customerName!,
-                timeSlot: `${slot.startTime}-${slot.endTime}`,
-                driverName: schedule.driverName
-              });
+              // Check for overlap with prep time (handles prep, slot, or both spanning midnight)
+              if (prepStart < slotEnd && slotStart < prepEnd) {
+                conflicts.push({
+                  bookingId: slot.bookingId!,
+                  customerName: slot.customerName!,
+                  timeSlot: `${slot.startTime}-${slot.endTime}`,
+                  driverName: schedule.driverName
+                });
+              }
             }
           }
         }
       }
 
       // Generate suggested time slots if there are conflicts
-      const suggestedTimeSlots = conflicts.length > 0 
+      const suggestedTimeSlots = conflicts.length > 0
         ? this.generateSuggestedTimeSlots(date, startTime, endTime)
         : [];
 
@@ -298,6 +314,23 @@ export class DriverSchedulingService {
         suggestedTimeSlots: []
       };
     }
+  }
+
+  /**
+   * Calendar-date arithmetic on a YYYY-MM-DD string, independent of any timezone offset — the
+   * date is already a business-local calendar day (see getBusinessDateString), so plain UTC
+   * component math is safe and avoids DST-shift bugs from parsing it as a local Date.
+   */
+  private addOneCalendarDay(dateStr: string): string {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const next = new Date(Date.UTC(y, m - 1, d + 1));
+    return `${next.getUTCFullYear()}-${String(next.getUTCMonth() + 1).padStart(2, '0')}-${String(next.getUTCDate()).padStart(2, '0')}`;
+  }
+
+  private subtractOneCalendarDay(dateStr: string): string {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const prev = new Date(Date.UTC(y, m - 1, d - 1));
+    return `${prev.getUTCFullYear()}-${String(prev.getUTCMonth() + 1).padStart(2, '0')}-${String(prev.getUTCDate()).padStart(2, '0')}`;
   }
 
   /**
@@ -404,13 +437,43 @@ export class DriverSchedulingService {
     const db = getAdminDb();
     const oldDocId = this.getScheduleDocId(params.driverId, params.oldDate);
     const newDocId = this.getScheduleDocId(params.driverId, params.newDate);
-    const sameDoc = oldDocId === newDocId;
+    const sameDoc = params.oldDate === params.newDate;
+
+    // Prefer the deterministic driverId_date doc, but production may still have a schedule for
+    // this driver/date stored under an older, non-deterministic doc id (from before that scheme
+    // existed) — fall back to the same driverId+date query getDriverSchedule() uses, so a
+    // reschedule doesn't miss real conflicts in (or blind-clear only half of) a legacy doc.
+    const findScheduleRef = async (
+      transaction: any,
+      dateStr: string,
+      deterministicDocId: string
+    ): Promise<{ ref: any; snap: any; docId: string }> => {
+      const detRef = db.collection('driverSchedules').doc(deterministicDocId);
+      const detSnap = await transaction.get(detRef);
+      if (detSnap.exists) return { ref: detRef, snap: detSnap, docId: deterministicDocId };
+
+      const legacyQuery = db
+        .collection('driverSchedules')
+        .where('driverId', '==', params.driverId)
+        .where('date', '==', dateStr)
+        .limit(1);
+      const legacySnapshot = await transaction.get(legacyQuery);
+      if (!legacySnapshot.empty) {
+        const legacyDoc = legacySnapshot.docs[0];
+        return { ref: legacyDoc.ref, snap: legacyDoc, docId: legacyDoc.id };
+      }
+
+      return { ref: detRef, snap: detSnap, docId: deterministicDocId };
+    };
 
     return db.runTransaction(async (transaction: any) => {
-      const oldRef = db.collection('driverSchedules').doc(oldDocId);
-      const oldSnap = await transaction.get(oldRef);
-      const newRef = sameDoc ? oldRef : db.collection('driverSchedules').doc(newDocId);
-      const newSnap = sameDoc ? oldSnap : await transaction.get(newRef);
+      const oldResolved = await findScheduleRef(transaction, params.oldDate, oldDocId);
+      const newResolved = sameDoc ? oldResolved : await findScheduleRef(transaction, params.newDate, newDocId);
+
+      const oldRef = oldResolved.ref;
+      const oldSnap = oldResolved.snap;
+      const newRef = newResolved.ref;
+      const newSnap = newResolved.snap;
 
       const oldTimeSlots: any[] = Array.isArray(oldSnap.data()?.timeSlots) ? [...oldSnap.data().timeSlots] : [];
       const clearedOldSlots = oldTimeSlots.map((slot) =>

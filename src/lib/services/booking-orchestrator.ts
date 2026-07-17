@@ -58,7 +58,7 @@ function normalizeIso(value: Date | string): string {
   return parsed.toISOString();
 }
 
-async function validateQuoteForSubmit(payload: SubmitBookingRequest): Promise<{ estimatedMinutes?: number } | null> {
+async function validateQuoteForSubmit(payload: SubmitBookingRequest): Promise<{ estimatedMinutes?: number; durationTrafficMinutes?: number } | null> {
   if (!payload.quoteId) {
     return null;
   }
@@ -249,7 +249,11 @@ export async function submitBookingOrchestration(
       tipAmount: 0,
       tipPercent: 0,
       totalFare: fare,
-      estimatedMinutes: matchedQuote?.estimatedMinutes,
+      // Scheduling must reserve the traffic-adjusted duration the quote actually priced and
+      // checked availability with, not the shorter free-flow estimate — otherwise a booking
+      // reserves too short a slot and a later request can overlap the traffic-adjusted portion
+      // of this ride.
+      estimatedMinutes: matchedQuote?.durationTrafficMinutes ?? matchedQuote?.estimatedMinutes,
     },
     customer: {
       name: customer.name,

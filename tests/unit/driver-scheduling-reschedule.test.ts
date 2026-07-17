@@ -12,14 +12,32 @@ function createFakeAdminDb(seed: Record<string, any> = {}) {
     _docId: id,
   });
 
+  // Minimal fake Query: supports the .where(...).limit(n) chain findScheduleRef() uses to look
+  // up a legacy (non-deterministic-id) schedule doc by driverId+date.
+  const makeQuery = (filters: Array<{ field: string; value: any }>, limitN?: number): any => ({
+    _isQuery: true,
+    where: (field: string, _op: string, value: any) => makeQuery([...filters, { field, value }], limitN),
+    limit: (n: number) => makeQuery(filters, n),
+    _filters: filters,
+    _limit: limitN,
+  });
+
   const db = {
     collection: (_name: string) => ({
       doc: (id: string) => makeRef(id),
+      where: (field: string, op: string, value: any) => makeQuery([{ field, value }]),
     }),
     runTransaction: async (callback: (tx: any) => Promise<any>) => {
       const tx = {
-        get: async (ref: any) => {
-          const data = store.get(ref._docId);
+        get: async (refOrQuery: any) => {
+          if (refOrQuery._isQuery) {
+            const matches = [...store.entries()]
+              .filter(([, data]) => refOrQuery._filters.every((f: any) => data?.[f.field] === f.value))
+              .slice(0, refOrQuery._limit ?? Infinity)
+              .map(([docId, data]) => ({ id: docId, exists: true, data: () => data, ref: makeRef(docId) }));
+            return { empty: matches.length === 0, docs: matches };
+          }
+          const data = store.get(refOrQuery._docId);
           return {
             exists: data !== undefined,
             data: () => data,
@@ -214,6 +232,79 @@ describe('rescheduleBookingAtomic', () => {
       expect(result.conflict.conflictingBookings[0].bookingId).toBe('booking-EARLY');
     }
     expect(store.get('gregg-driver-001_2026-08-01').timeSlots.find((s: any) => s.id === '01:00-02:00')?.status).toBe('booked');
+  });
+
+  it('finds conflicts in and clears the old slot from a legacy (non-deterministic-id) schedule doc (regression: this transaction only read the driverId_date ref, missing a schedule still stored under an old random doc id)', async () => {
+    const { db, store } = createFakeAdminDb({
+      // Legacy doc: not keyed as `${driverId}_${date}`, only discoverable by querying driverId+date.
+      'legacy-doc-abc123': {
+        id: 'legacy-doc-abc123',
+        driverId: 'gregg-driver-001',
+        driverName: 'Driver',
+        date: '2026-08-01',
+        timeSlots: [
+          { id: '09:00-10:00', startTime: '09:00', endTime: '10:00', isAvailable: false, status: 'booked', bookingId: 'booking-1', customerName: 'Jane Doe' },
+        ],
+      },
+    });
+    getAdminDb.mockReturnValue(db);
+
+    const result = await driverSchedulingService.rescheduleBookingAtomic({
+      ...baseParams,
+      oldDate: '2026-08-01',
+      newDate: '2026-08-01',
+      startTime: '14:00',
+      endTime: '15:00',
+    });
+
+    expect(result.success).toBe(true);
+    // The legacy doc (not a new deterministic-id doc) should hold both the freed old slot and
+    // the newly-booked slot.
+    const legacyDoc = store.get('legacy-doc-abc123');
+    expect(legacyDoc.timeSlots.find((s: any) => s.id === '09:00-10:00')?.status).toBe('available');
+    expect(legacyDoc.timeSlots.find((s: any) => s.id === '14:00-15:00')?.bookingId).toBe('booking-1');
+    // No stray deterministic-id doc should have been created alongside it.
+    expect(store.get('gregg-driver-001_2026-08-01')).toBeUndefined();
+  });
+
+  it('detects a conflict against a legacy schedule doc on the new day (regression: only the deterministic-id doc was checked, so a legacy doc\'s real bookings were invisible to the conflict check)', async () => {
+    const { db, store } = createFakeAdminDb({
+      'gregg-driver-001_2026-08-01': {
+        id: 'gregg-driver-001_2026-08-01',
+        driverId: 'gregg-driver-001',
+        driverName: 'Driver',
+        date: '2026-08-01',
+        timeSlots: [
+          { id: '09:00-10:00', startTime: '09:00', endTime: '10:00', isAvailable: false, status: 'booked', bookingId: 'booking-1', customerName: 'Jane Doe' },
+        ],
+      },
+      'legacy-doc-xyz789': {
+        id: 'legacy-doc-xyz789',
+        driverId: 'gregg-driver-001',
+        driverName: 'Driver',
+        date: '2026-08-02',
+        timeSlots: [
+          { id: '11:00-12:00', startTime: '11:00', endTime: '12:00', isAvailable: false, status: 'booked', bookingId: 'booking-OTHER', customerName: 'Other Customer' },
+        ],
+      },
+    });
+    getAdminDb.mockReturnValue(db);
+
+    const result = await driverSchedulingService.rescheduleBookingAtomic({
+      ...baseParams,
+      oldDate: '2026-08-01',
+      newDate: '2026-08-02',
+      startTime: '11:00',
+      endTime: '12:00',
+    });
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.conflict.conflictingBookings[0].bookingId).toBe('booking-OTHER');
+    }
+    // Nothing written: old slot still booked, legacy doc's conflicting slot untouched.
+    expect(store.get('gregg-driver-001_2026-08-01').timeSlots.find((s: any) => s.id === '09:00-10:00')?.status).toBe('booked');
+    expect(store.get('legacy-doc-xyz789').timeSlots.find((s: any) => s.id === '11:00-12:00')?.bookingId).toBe('booking-OTHER');
   });
 
   it('creates a schedule document for the new day when none exists yet', async () => {
