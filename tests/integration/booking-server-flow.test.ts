@@ -141,6 +141,8 @@ describe('Booking server golden path', () => {
     vi.mocked(quoteService.getQuote).mockResolvedValue({
       pickupAddress: submitPayload.trip.pickup.address,
       dropoffAddress: submitPayload.trip.dropoff.address,
+      pickupCoords: submitPayload.trip.pickup.coordinates,
+      dropoffCoords: submitPayload.trip.dropoff.coordinates,
       pickupDateTime: submitPayload.trip.pickupDateTime,
       fareType: submitPayload.trip.fareType,
       price: submitPayload.fare,
@@ -181,6 +183,8 @@ describe('Booking server golden path', () => {
     vi.mocked(quoteService.getQuote).mockResolvedValue({
       pickupAddress: submitPayload.trip.pickup.address,
       dropoffAddress: submitPayload.trip.dropoff.address,
+      pickupCoords: submitPayload.trip.pickup.coordinates,
+      dropoffCoords: submitPayload.trip.dropoff.coordinates,
       pickupDateTime: submitPayload.trip.pickupDateTime,
       fareType: submitPayload.trip.fareType,
       price: submitPayload.fare,
@@ -203,13 +207,15 @@ describe('Booking server golden path', () => {
       ...submitPayload,
       trip: {
         ...submitPayload.trip,
-        pickupDateTime: '2026-03-02T13:00:00.000Z',
+        pickupDateTime: '2028-03-02T13:00:00.000Z',
       },
     };
 
     vi.mocked(quoteService.getQuote).mockResolvedValue({
       pickupAddress: payload.trip.pickup.address,
       dropoffAddress: payload.trip.dropoff.address,
+      pickupCoords: payload.trip.pickup.coordinates,
+      dropoffCoords: payload.trip.dropoff.coordinates,
       pickupDateTime: payload.trip.pickupDateTime,
       fareType: payload.trip.fareType,
       price: payload.fare,
@@ -234,7 +240,7 @@ describe('Booking server golden path', () => {
 
     expect(submitRes.status).toBe(200);
     expect(submitData.success).toBe(true);
-    expect(sendAdminSms).toHaveBeenCalledWith(expect.stringContaining('3/2/2026, 8:00 AM'));
+    expect(sendAdminSms).toHaveBeenCalledWith(expect.stringContaining('3/2/2028, 8:00 AM'));
   });
 
   it('SMOKE_TEST_MODE=true suppresses the verification email, driver notifications, and admin SMS (regression: a real local test booking on 2026-07-16 sent a real notification because nothing checked this flag)', async () => {
@@ -245,6 +251,8 @@ describe('Booking server golden path', () => {
       vi.mocked(quoteService.getQuote).mockResolvedValue({
         pickupAddress: submitPayload.trip.pickup.address,
         dropoffAddress: submitPayload.trip.dropoff.address,
+        pickupCoords: submitPayload.trip.pickup.coordinates,
+        dropoffCoords: submitPayload.trip.dropoff.coordinates,
         pickupDateTime: submitPayload.trip.pickupDateTime,
         fareType: submitPayload.trip.fareType,
         price: submitPayload.fare,

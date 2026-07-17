@@ -88,6 +88,7 @@ One ordered list merging the **Unified Plan** remainder and the **full audit** f
 | 30 | **Validation consistency** | TripDetailsPhase vs ContactInfoPhase | Same pattern: provider state vs local state; align approach. |
 | 31 | **isMobile detection** | Multiple components | Single shared hook or util; reuse. |
 | 32 | **Hardcoded phone** | FlightInfoPhase (or similar) | Replace `(646) 221-6370` with CMS or config. |
+| 33 | **Fare formula duplicated** | `src/app/api/booking/quote/route.ts` vs `src/app/api/admin/pricing/test-quote/route.ts` | The base+mileage+time / discount / airport-multiplier / single-ceil-at-end calculation is hand-duplicated in both files with no shared helper. This is the exact bug class fixed 2026-07 (the admin preview had drifted from the real quote's rounding) — extract a shared `computeFare()` so a future rate/rounding change can't silently re-diverge between the two routes. |
 
 ---
 

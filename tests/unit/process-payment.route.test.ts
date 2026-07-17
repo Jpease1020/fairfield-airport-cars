@@ -85,7 +85,7 @@ const baseRequestBody = {
     trip: {
       pickup: { address: '123 Main St, Fairfield, CT', coordinates: null },
       dropoff: { address: 'JFK Airport, Queens, NY', coordinates: null },
-      pickupDateTime: '2025-01-01T15:00:00.000Z',
+      pickupDateTime: '2028-01-01T15:00:00.000Z',
       fareType: 'personal',
       flightInfo: { airline: 'Delta', flightNumber: 'DL123' },
     },
@@ -181,15 +181,15 @@ describe('POST /api/payment/process-payment', () => {
           expect.objectContaining({
             source: 'payment',
             event: 'payment_booking_create',
-            normalizedPickupDateTimeIso: '2025-01-01T15:00:00.000Z',
-            businessPickupDateTime: '1/1/2025, 10:00 AM',
+            normalizedPickupDateTimeIso: '2028-01-01T15:00:00.000Z',
+            businessPickupDateTime: '1/1/2028, 10:00 AM',
           }),
         ]),
       })
     );
     expect(mockSendSms).toHaveBeenCalledWith({
       to: '+15555550123',
-      body: expect.stringContaining('1/1/2025, 10:00 AM'),
+      body: expect.stringContaining('1/1/2028, 10:00 AM'),
     });
   });
 
@@ -331,6 +331,48 @@ describe('POST /api/payment/process-payment', () => {
       'Failed to send verification notifications:',
       expect.any(Error)
     );
+  });
+
+  it('rejects a new booking pickup time less than 24h out BEFORE charging the card (regression: this check used to only run inside createPaidBookingAndNotify, after Square had already been charged, with no refund path)', async () => {
+    const soonPayload = {
+      ...baseRequestBody,
+      bookingData: {
+        ...baseRequestBody.bookingData,
+        trip: {
+          ...baseRequestBody.bookingData.trip,
+          pickupDateTime: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+        },
+      },
+    };
+
+    const response = await POST(buildRequest(soonPayload));
+    const payload = await response!.json();
+
+    expect(response!.status).toBe(400);
+    expect(payload.code).toBe('MINIMUM_ADVANCE_NOTICE');
+    expect(mockProcessPayment).not.toHaveBeenCalled();
+    expect(mockCreateBookingAtomic).not.toHaveBeenCalled();
+  });
+
+  it('rejects an invalid or missing pickup date/time BEFORE charging the card (regression: an invalid Date made the advance-notice guard silently no-op — Number.isNaN(parsedDate.getTime()) short-circuited the whole check to skipped rather than rejected — so the charge went through and only createPaidBookingAndNotify caught it afterward, once the card was already charged)', async () => {
+    const invalidDatePayload = {
+      ...baseRequestBody,
+      bookingData: {
+        ...baseRequestBody.bookingData,
+        trip: {
+          ...baseRequestBody.bookingData.trip,
+          pickupDateTime: 'not-a-real-date',
+        },
+      },
+    };
+
+    const response = await POST(buildRequest(invalidDatePayload));
+    const payload = await response!.json();
+
+    expect(response!.status).toBe(400);
+    expect(payload.code).toBe('INVALID_PICKUP_DATETIME');
+    expect(mockProcessPayment).not.toHaveBeenCalled();
+    expect(mockCreateBookingAtomic).not.toHaveBeenCalled();
   });
 
   it('auto-refunds the payment when booking creation fails after a successful charge (regression: customer used to be left charged with no booking and no refund)', async () => {

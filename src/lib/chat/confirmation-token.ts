@@ -20,17 +20,30 @@ export type VerificationResult =
       reason: string;
     };
 
-function requireSecret(): string {
-  const secret =
-    process.env.CHAT_CONFIRMATION_SECRET ||
-    process.env.AUTH_SESSION_SECRET ||
-    process.env.AUTH_TOKEN_SECRET;
+let warnedAboutMissingDedicatedSecret = false;
 
-  if (!secret) {
+function requireSecret(): string {
+  if (process.env.CHAT_CONFIRMATION_SECRET) {
+    return process.env.CHAT_CONFIRMATION_SECRET;
+  }
+
+  const sharedAuthSecret = process.env.AUTH_SESSION_SECRET || process.env.AUTH_TOKEN_SECRET;
+  if (!sharedAuthSecret) {
     throw new Error('CHAT_CONFIRMATION_SECRET or AUTH_SESSION_SECRET is required');
   }
 
-  return secret;
+  if (!warnedAboutMissingDedicatedSecret) {
+    console.warn(
+      'CHAT_CONFIRMATION_SECRET is not set — deriving a domain-separated key from AUTH_SESSION_SECRET instead of using it directly. Set a dedicated CHAT_CONFIRMATION_SECRET in Vercel when convenient.'
+    );
+    warnedAboutMissingDedicatedSecret = true;
+  }
+
+  // Never sign with the raw session-auth secret directly: that key also authenticates real user
+  // sessions, so reusing it here means a leak of the confirmation-signing key would also expose
+  // session-forging capability, and vice versa. Deriving a separate key via HMAC with a fixed,
+  // distinct context string keeps the two independent even without a dedicated env var.
+  return crypto.createHmac('sha256', sharedAuthSecret).update('chat-confirmation-secret-v1').digest('hex');
 }
 
 function toBase64Url(value: string): string {
