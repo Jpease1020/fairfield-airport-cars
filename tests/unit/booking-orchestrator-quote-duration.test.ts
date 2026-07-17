@@ -62,17 +62,18 @@ const buildPayload = () => ({
   },
 });
 
-describe('submitBookingOrchestration — scheduling duration must match what the quote priced', () => {
-  it('reserves the traffic-adjusted duration the quote priced and checked availability with, not the shorter free-flow estimate (regression: storing the base estimatedMinutes let a booking reserve too short a slot, so a later booking could overlap the traffic-adjusted portion of a ride the customer was quoted for)', async () => {
+describe('submitBookingOrchestration — quote duration propagation', () => {
+  it('carries the quote\'s (traffic-adjusted) estimatedMinutes onto the booking\'s trip so scheduling reserves the actually-quoted slot length (regression: validateQuoteForSubmit stopped returning the matched quote, so the booking never recorded a duration and every schedule slot silently fell back to the flat 120-minute default)', async () => {
     const payload = buildPayload();
     getQuote.mockResolvedValue({
       pickupAddress: payload.trip.pickup.address,
       dropoffAddress: payload.trip.dropoff.address,
+      pickupCoords: payload.trip.pickup.coordinates,
+      dropoffCoords: payload.trip.dropoff.coordinates,
       pickupDateTime: payload.trip.pickupDateTime,
       fareType: payload.trip.fareType,
       price: payload.fare,
-      estimatedMinutes: 60,
-      durationTrafficMinutes: 100,
+      estimatedMinutes: 100,
     });
 
     await submitBookingOrchestration({ payload, submittedPickupDateTimeRaw: payload.trip.pickupDateTime.toISOString() });
@@ -80,23 +81,5 @@ describe('submitBookingOrchestration — scheduling duration must match what the
     expect(createBookingAtomic).toHaveBeenCalledTimes(1);
     const bookingData = createBookingAtomic.mock.calls[0][0];
     expect(bookingData.trip.estimatedMinutes).toBe(100);
-  });
-
-  it('falls back to the base estimatedMinutes for an older quote that predates the durationTrafficMinutes field', async () => {
-    const payload = buildPayload();
-    getQuote.mockResolvedValue({
-      pickupAddress: payload.trip.pickup.address,
-      dropoffAddress: payload.trip.dropoff.address,
-      pickupDateTime: payload.trip.pickupDateTime,
-      fareType: payload.trip.fareType,
-      price: payload.fare,
-      estimatedMinutes: 60,
-      // no durationTrafficMinutes
-    });
-
-    await submitBookingOrchestration({ payload, submittedPickupDateTimeRaw: payload.trip.pickupDateTime.toISOString() });
-
-    const bookingData = createBookingAtomic.mock.calls[0][0];
-    expect(bookingData.trip.estimatedMinutes).toBe(60);
   });
 });
