@@ -91,14 +91,22 @@ export async function POST(request: Request) {
       }
     }
 
-    // createPaidBookingAndNotify (called below, after the charge) also enforces this, but only
-    // as a backstop — by the time it throws there, the card has already been charged and this
-    // route has no refund handling for that failure. Check it here too, before any money moves,
-    // for the actual new-booking path this endpoint creates.
+    // createPaidBookingAndNotify (called below, after the charge) skips its own copy of this
+    // check for this route (see skipMinimumNoticeCheck) precisely because this is the
+    // authoritative, pre-charge check — checking it again after the charge would compare the
+    // same pickup time against a LATER moving Date.now() threshold for no reason, and could
+    // reject a booking that was genuinely compliant when the customer submitted it purely
+    // because Square's own processing took long enough for the clock to cross the boundary.
     if (!existingBookingId && bookingData) {
       const pickupDateTimeValue = bookingData.pickupDateTime || bookingData.trip?.pickupDateTime;
-      const parsedPickupDateTime = new Date(pickupDateTimeValue || Date.now());
-      if (!Number.isNaN(parsedPickupDateTime.getTime()) && !isAtLeastMinimumAdvanceNotice(parsedPickupDateTime)) {
+      const parsedPickupDateTime = new Date(pickupDateTimeValue);
+      if (Number.isNaN(parsedPickupDateTime.getTime())) {
+        return NextResponse.json({
+          error: 'Invalid or missing pickup date/time.',
+          code: 'INVALID_PICKUP_DATETIME',
+        }, { status: 400 });
+      }
+      if (!isAtLeastMinimumAdvanceNotice(parsedPickupDateTime)) {
         return NextResponse.json({
           error: 'Please book at least 24 hours in advance',
           code: 'MINIMUM_ADVANCE_NOTICE',
@@ -153,6 +161,8 @@ export async function POST(request: Request) {
         tipCents,
         authUserId: authContext?.uid ?? null,
         smokeTest: isSmokeTest,
+        // Already validated (and rejected if not) above, before the card was charged.
+        skipMinimumNoticeCheck: true,
       });
 
       bookingId = bookingResult.bookingId;

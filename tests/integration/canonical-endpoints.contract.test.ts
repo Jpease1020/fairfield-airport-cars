@@ -238,6 +238,9 @@ describe('Canonical endpoint contracts', () => {
             email: 'jane@example.com',
             phone: '2035551234',
           },
+          trip: {
+            pickupDateTime: new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(),
+          },
         },
       }),
     });

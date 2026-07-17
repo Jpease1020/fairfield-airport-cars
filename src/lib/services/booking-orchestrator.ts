@@ -38,6 +38,14 @@ interface CreatePaidBookingParams {
   tipCents: number;
   authUserId?: string | null;
   smokeTest?: boolean;
+  // Set by process-payment/route.ts, which already validated advance notice against the same
+  // pickupDateTime immediately before charging the card. Re-deriving Date.now() here again, after
+  // the charge has completed, checks against a LATER moving threshold than the pre-charge check
+  // did — a pickup that was just over 24h out when the pre-charge guard ran could fail this
+  // post-charge recheck purely because Square's own processing took long enough for the clock to
+  // cross the boundary, leaving a charged card needing a refund for a booking that was actually
+  // compliant when the customer submitted it.
+  skipMinimumNoticeCheck?: boolean;
 }
 
 interface CreatePaidBookingResult {
@@ -482,7 +490,7 @@ export async function submitBookingOrchestration(
 export async function createPaidBookingAndNotify(
   params: CreatePaidBookingParams
 ): Promise<CreatePaidBookingResult> {
-  const { bookingData, amountCents, tipCents, authUserId, smokeTest } = params;
+  const { bookingData, amountCents, tipCents, authUserId, smokeTest, skipMinimumNoticeCheck } = params;
   const pickupDateTimeValue = bookingData.pickupDateTime || bookingData.trip?.pickupDateTime;
   const parsedPickupDateTime = new Date(pickupDateTimeValue || Date.now());
   const normalizedPickupDateTimeIso = Number.isNaN(parsedPickupDateTime.getTime())
@@ -494,10 +502,11 @@ export async function createPaidBookingAndNotify(
   // skippable /api/booking/validate-phase endpoint, which this flow doesn't call either).
   // SMOKE_TEST_MODE gates side effects (real payments/notifications), not data validity — a
   // smoke test should still submit a realistic, >24h-out pickup time like any real booking.
-  // The payment route also checks this before charging the card (see process-payment/route.ts) —
-  // this is a backstop for any other caller, not the primary enforcement point, since by the
-  // time this function runs here the payment has already been captured.
-  if (!isAtLeastMinimumAdvanceNotice(parsedPickupDateTime)) {
+  // Skipped when the caller already validated this before charging the card (see
+  // process-payment/route.ts) — re-running it here, after the charge, would check the SAME
+  // pickup time against a LATER moving `Date.now()` threshold for no reason. This is only a
+  // backstop for a hypothetical other caller that skipped its own pre-charge validation.
+  if (!skipMinimumNoticeCheck && !isAtLeastMinimumAdvanceNotice(parsedPickupDateTime)) {
     throw new BookingApiError(400, {
       error: 'Please book at least 24 hours in advance',
       code: 'MINIMUM_ADVANCE_NOTICE',

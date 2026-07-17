@@ -336,4 +336,25 @@ describe('POST /api/payment/process-payment', () => {
     expect(mockProcessPayment).not.toHaveBeenCalled();
     expect(mockCreateBookingAtomic).not.toHaveBeenCalled();
   });
+
+  it('rejects an invalid or missing pickup date/time BEFORE charging the card (regression: an invalid Date made the advance-notice guard silently no-op — Number.isNaN(parsedDate.getTime()) short-circuited the whole check to skipped rather than rejected — so the charge went through and only createPaidBookingAndNotify caught it afterward, once the card was already charged)', async () => {
+    const invalidDatePayload = {
+      ...baseRequestBody,
+      bookingData: {
+        ...baseRequestBody.bookingData,
+        trip: {
+          ...baseRequestBody.bookingData.trip,
+          pickupDateTime: 'not-a-real-date',
+        },
+      },
+    };
+
+    const response = await POST(buildRequest(invalidDatePayload));
+    const payload = await response!.json();
+
+    expect(response!.status).toBe(400);
+    expect(payload.code).toBe('INVALID_PICKUP_DATETIME');
+    expect(mockProcessPayment).not.toHaveBeenCalled();
+    expect(mockCreateBookingAtomic).not.toHaveBeenCalled();
+  });
 });
