@@ -20,7 +20,7 @@ describe('GET /api/admin/calendar-embed', () => {
 
     const response = await GET(new Request('http://localhost/api/admin/calendar-embed') as any);
 
-    expect(response.headers.get('Cache-Control')).toBe('no-store');
+    expect(response!.headers.get('Cache-Control')).toBe('no-store');
   });
 
   it('does not return calendar config for a non-admin request', async () => {
@@ -31,6 +31,6 @@ describe('GET /api/admin/calendar-embed', () => {
 
     const response = await GET(new Request('http://localhost/api/admin/calendar-embed') as any);
 
-    expect(response.status).toBe(403);
+    expect(response!.status).toBe(403);
   });
 });
