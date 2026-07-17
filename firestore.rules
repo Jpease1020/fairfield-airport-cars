@@ -28,8 +28,14 @@ service cloud.firestore {
     // needs a handful of server routes migrated off the client Firestore SDK first: review
     // submission and driver lookup currently run server-side with no Firebase Auth session at
     // all, and would be denied outright under stricter rules without that migration).
-    match /{document=**} {
-      allow read, write: if true;
+    //
+    // Firestore grants access if ANY matching rule allows it — a flat `match /{document=**}`
+    // here also matches `users/**` and `config/**`, so an unconditional `allow if true` on this
+    // catch-all completely overrides the restrictive rules above for those two collections,
+    // regardless of what they say. Explicitly excluding both by collection name is what actually
+    // makes those restrictive rules the authoritative ones for their own paths.
+    match /{collection}/{document=**} {
+      allow read, write: if collection != 'users' && collection != 'config';
     }
   }
 }
