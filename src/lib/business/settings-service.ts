@@ -11,5 +11,6 @@ export async function getSettings(): Promise<Settings> {
     perMinute: pricing.perMinute,
     personalDiscountPercent: pricing.personalDiscountPercent,
     airportReturnMultiplier: pricing.airportReturnMultiplier,
+    minimumFare: pricing.minimumFare,
   };
 }

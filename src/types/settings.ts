@@ -11,6 +11,7 @@ export interface Settings {
   perMinute: number;        // dollars per minute
   personalDiscountPercent: number; // % discount for personal rides
   airportReturnMultiplier: number; // multiplier for airport-to-home rides
+  minimumFare: number;      // absolute floor a customer is ever charged, dollars
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -19,4 +20,5 @@ export const DEFAULT_SETTINGS: Settings = {
   perMinute: 0.20,
   personalDiscountPercent: 10,
   airportReturnMultiplier: 1.15,
+  minimumFare: 100,
 };

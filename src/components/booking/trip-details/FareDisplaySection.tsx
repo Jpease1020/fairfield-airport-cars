@@ -11,6 +11,7 @@ interface FareDisplaySectionProps {
   fareType: 'personal' | 'business';
   cmsData: any;
   error?: string | null;
+  minimumFare?: number | null;
 }
 
 export const FareDisplaySection: React.FC<FareDisplaySectionProps> = ({
@@ -18,7 +19,8 @@ export const FareDisplaySection: React.FC<FareDisplaySectionProps> = ({
   isCalculating,
   fareType,
   cmsData,
-  error
+  error,
+  minimumFare
 }) => {
   const formatFare = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -78,9 +80,18 @@ export const FareDisplaySection: React.FC<FareDisplaySectionProps> = ({
           </Text>
         </Stack>
         
+        {minimumFare != null && minimumFare > 0 && (
+          <Text size="sm" color="secondary" data-testid="minimum-fare-notice">
+            {(cmsData?.['tripDetailsPhase-minimumFareNotice'] as string | undefined)?.replace(
+              '{amount}',
+              formatFare(minimumFare)
+            ) || `A ${formatFare(minimumFare)} minimum fare applies to all rides.`}
+          </Text>
+        )}
+
         {/* Countdown for quote validity if available */}
         <CountdownRow />
-        
+
         {/* Price Guarantee - Temporarily hidden */}
         {/* <PriceGuarantee variant="full" cmsData={cmsData} /> */}
       </Stack>

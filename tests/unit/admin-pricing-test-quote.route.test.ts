@@ -46,6 +46,7 @@ describe('POST /api/admin/pricing/test-quote', () => {
       perMinute: 0.5,
       airportReturnMultiplier: 1.15,
       personalDiscountPercent: 10,
+      minimumFare: 0,
     });
     mockIsAirportLocation.mockReturnValue(false);
     mockDistanceMatrix.mockResolvedValue({

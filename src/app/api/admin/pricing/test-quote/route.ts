@@ -29,6 +29,7 @@ export async function POST(request: NextRequest) {
       perMinute: pricingOverrides?.perMinute ?? savedConfig.perMinute,
       airportReturnMultiplier: pricingOverrides?.airportReturnMultiplier ?? savedConfig.airportReturnMultiplier,
       personalDiscountPercent: pricingOverrides?.personalDiscountPercent ?? savedConfig.personalDiscountPercent,
+      minimumFare: pricingOverrides?.minimumFare ?? savedConfig.minimumFare,
     };
 
     // Always geocode the address text, same as the real quote endpoint (quote/route.ts) — using
@@ -83,9 +84,11 @@ export async function POST(request: NextRequest) {
     }
 
     const subtotal = Math.ceil(rawFare);
+    const minimumFareApplied = pricing.minimumFare > 0 && subtotal < pricing.minimumFare;
+    const fare = minimumFareApplied ? pricing.minimumFare : subtotal;
 
     return NextResponse.json({
-      fare: subtotal,
+      fare,
       distanceMiles: Math.round(distanceMiles * 100) / 100,
       durationMinutes: Math.round(durationMinutes),
       durationTrafficMinutes: Math.round(durationTrafficMinutes),
@@ -97,6 +100,8 @@ export async function POST(request: NextRequest) {
         personalDiscount: personalDiscount > 0 ? Math.round(personalDiscount * 100) / 100 : null,
         returnMultiplier: returnMultiplierApplied ? pricing.airportReturnMultiplier : null,
         preMultiplierFare: returnMultiplierApplied ? Math.ceil(preMultiplierFare) : null,
+        minimumFare: pricing.minimumFare,
+        minimumFareApplied,
       },
       isAirportPickup,
       isAirportDropoff,

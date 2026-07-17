@@ -11,6 +11,10 @@ export const pricingConfigSchema = z.object({
   perMinute: z.number().min(0).max(10),
   airportReturnMultiplier: z.number().min(1).max(5),
   personalDiscountPercent: z.number().min(0).max(100),
+  // The absolute minimum a customer is ever charged, applied after every other stage (base +
+  // mileage + time, personal discount, airport multiplier) — a short or nearby ride must never
+  // price out below this floor regardless of what the formula above it computes.
+  minimumFare: z.number().min(0).max(500).default(0),
   updatedAt: z.union([z.date(), z.string()]).optional(),
   updatedBy: z.string().optional(),
   version: z.number().int().min(1).optional(),
@@ -24,6 +28,7 @@ export const DEFAULT_PRICING_CONFIG: PricingConfig = {
   perMinute: 0.20,
   airportReturnMultiplier: 1.15,
   personalDiscountPercent: 10,
+  minimumFare: 100,
   version: 1,
 };
 

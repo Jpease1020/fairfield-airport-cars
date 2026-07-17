@@ -88,6 +88,7 @@ export const quoteResponseSchema = z.object({
   expiresInMinutes: z.number(),
   availabilityWarning: z.string().nullable().optional(),
   suggestedTimes: z.array(z.string()).optional(),
+  minimumFare: z.number().optional(),
 });
 
 export const submitBookingRequestSchema = z.object({

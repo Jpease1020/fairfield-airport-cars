@@ -42,6 +42,7 @@ export async function POST(request: Request) {
     perMinute: PER_MINUTE_RATE,
     personalDiscountPercent,
     airportReturnMultiplier,
+    minimumFare: MINIMUM_FARE,
   } = settings;
 
   // Validate pickup time is in the future
@@ -143,7 +144,9 @@ export async function POST(request: Request) {
     rawFare = rawFare * multiplier;
   }
 
-  let fare = Math.ceil(rawFare);
+  // Floor applies last, after every discount/multiplier — it's the absolute minimum a customer
+  // is ever charged, not another input to the formula above it.
+  const fare = Math.max(Math.ceil(rawFare), MINIMUM_FARE);
 
   // Check availability for the requested time slot
   let availabilityWarning: string | null = null;
@@ -207,7 +210,8 @@ export async function POST(request: Request) {
       expiresAt: expiresAt.toISOString(),
       expiresInMinutes: 15,
       availabilityWarning,
-      suggestedTimes
+      suggestedTimes,
+      minimumFare: MINIMUM_FARE,
     });
     return NextResponse.json(responseBody);
   } catch (error) {
@@ -220,7 +224,8 @@ export async function POST(request: Request) {
       expiresAt: expiresAt.toISOString(),
       expiresInMinutes: 15,
       availabilityWarning,
-      suggestedTimes
+      suggestedTimes,
+      minimumFare: MINIMUM_FARE,
     });
     return NextResponse.json(responseBody);
   }

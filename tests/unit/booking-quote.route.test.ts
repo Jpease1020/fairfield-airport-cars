@@ -61,6 +61,7 @@ describe('POST /api/booking/quote', () => {
       perMile: 2,
       perMinute: 0.5,
       airportReturnMultiplier: 1.8,
+      minimumFare: 0,
     });
     mockClassifyTrip.mockReturnValue({
       classification: 'normal',
@@ -165,6 +166,7 @@ describe('POST /api/booking/quote', () => {
       perMinute: 0,
       airportReturnMultiplier: 1.09,
       personalDiscountPercent: 0,
+      minimumFare: 0,
     });
     mockIsAirportLocation.mockImplementation((address: string) => address === 'JFK Airport, Queens, NY');
 
@@ -180,5 +182,57 @@ describe('POST /api/booking/quote', () => {
 
     // Old per-stage-ceil behavior would have produced ceil(ceil(10.01) * 1.09) = ceil(11.99) = 12.
     expect(payload.fare).toBe(11);
+  });
+
+  it('raises a short/nearby ride up to the configured minimum fare (regression: no floor existed, so a 2-minute local hop could price out far below what covers dispatching a driver)', async () => {
+    const pickupTime = new Date(Date.now() + 26 * 60 * 60 * 1000).toISOString();
+    // Zeroed mileage/time rates so the raw calculated fare (just baseFare) is well under the floor.
+    mockGetSettings.mockResolvedValue({
+      baseFare: 5,
+      perMile: 0,
+      perMinute: 0,
+      airportReturnMultiplier: 1.15,
+      personalDiscountPercent: 0,
+      minimumFare: 100,
+    });
+
+    const response = await POST(
+      buildRequest({
+        origin: 'Fairfield Station, Fairfield, CT',
+        destination: 'JFK Airport, Queens, NY',
+        fareType: 'business',
+        pickupTime,
+      })
+    );
+    const payload = await response.json();
+
+    expect(payload.fare).toBe(100);
+    expect(payload.minimumFare).toBe(100);
+  });
+
+  it('does not reduce a fare that is already above the minimum', async () => {
+    const pickupTime = new Date(Date.now() + 26 * 60 * 60 * 1000).toISOString();
+    mockGetSettings.mockResolvedValue({
+      baseFare: 20,
+      perMile: 2,
+      perMinute: 0.5,
+      airportReturnMultiplier: 1.15,
+      personalDiscountPercent: 0,
+      minimumFare: 30,
+    });
+
+    const response = await POST(
+      buildRequest({
+        origin: 'Fairfield Station, Fairfield, CT',
+        destination: 'JFK Airport, Queens, NY',
+        fareType: 'business',
+        pickupTime,
+      })
+    );
+    const payload = await response.json();
+
+    // With the beforeEach distance/duration mock (10 mi, 40 min traffic): 20 + 10*2 + 40*0.5 = 60,
+    // well above the 30 floor — the floor must not clamp it down to 30.
+    expect(payload.fare).toBe(60);
   });
 });
