@@ -329,6 +329,16 @@ export const getBooking = async (bookingId: string): Promise<Booking | null> => 
   } as Booking;
 };
 
+// Look up a booking by the Square payment ID stored on it at creation/payment time.
+// Square webhook events are keyed by payment.id, not by our own booking ID, so this is the
+// only reliable way for the webhook to find the right booking to confirm.
+export const getBookingIdBySquarePaymentId = async (squarePaymentId: string): Promise<string | null> => {
+  const db = getAdminDb();
+  const snapshot = await db.collection('bookings').where('squarePaymentId', '==', squarePaymentId).limit(1).get();
+  if (snapshot.empty) return null;
+  return snapshot.docs[0].id;
+};
+
 // Get all bookings with filtering and sorting
 export const getBookings = async (
   status?: Booking['status'],

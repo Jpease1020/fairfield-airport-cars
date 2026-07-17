@@ -1,16 +1,18 @@
 import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
-import { processPayment } from '@/lib/services/square-service';
-import { createBookingAtomic, getBooking } from '@/lib/services/booking-service';
+import { processPayment, refundPayment } from '@/lib/services/square-service';
+import { createBookingAtomic, getBooking, updateBooking } from '@/lib/services/booking-service';
 import { sendBookingVerificationEmail } from '@/lib/services/email-service';
 import { sendSms } from '@/lib/services/twilio-service';
 
 vi.mock('@/lib/services/square-service', () => ({
   processPayment: vi.fn(),
+  refundPayment: vi.fn(),
 }));
 
 vi.mock('@/lib/services/booking-service', () => ({
   createBookingAtomic: vi.fn(),
   getBooking: vi.fn(),
+  updateBooking: vi.fn(),
 }));
 
 vi.mock('@/lib/services/email-service', () => ({
@@ -40,14 +42,21 @@ vi.mock('@/lib/security/rate-limit', () => ({
   enforceRateLimit: vi.fn().mockResolvedValue(null),
 }));
 
+vi.mock('@/lib/utils/auth-server', () => ({
+  getAuthContext: vi.fn().mockResolvedValue(null),
+  requireOwnerOrAdmin: vi.fn().mockResolvedValue({ ok: true }),
+}));
+
 vi.mock('firebase/firestore', () => ({
   doc: vi.fn(() => ({})),
   updateDoc: vi.fn(() => Promise.resolve()),
 }));
 
 const mockProcessPayment = processPayment as unknown as ReturnType<typeof vi.fn>;
+const mockRefundPayment = refundPayment as unknown as ReturnType<typeof vi.fn>;
 const mockCreateBookingAtomic = createBookingAtomic as unknown as ReturnType<typeof vi.fn>;
 const mockGetBooking = getBooking as unknown as ReturnType<typeof vi.fn>;
+const mockUpdateBooking = updateBooking as unknown as ReturnType<typeof vi.fn>;
 const mockSendBookingVerificationEmail = sendBookingVerificationEmail as unknown as ReturnType<typeof vi.fn>;
 const mockSendSms = sendSms as unknown as ReturnType<typeof vi.fn>;
 
@@ -314,5 +323,86 @@ describe('POST /api/payment/process-payment', () => {
       'Failed to send verification notifications:',
       expect.any(Error)
     );
+  });
+
+  it('auto-refunds the payment when booking creation fails after a successful charge (regression: customer used to be left charged with no booking and no refund)', async () => {
+    mockProcessPayment.mockResolvedValueOnce({
+      success: true,
+      orderId: 'order-conflict',
+      paymentId: 'pay-conflict',
+      status: 'COMPLETED',
+      amount: 15000,
+      currency: 'USD',
+    });
+    mockCreateBookingAtomic.mockRejectedValueOnce(new Error('Time slot conflicts with existing bookings'));
+    mockRefundPayment.mockResolvedValueOnce({ success: true, refundId: 'refund-1' });
+
+    const response = await POST(buildRequest(baseRequestBody));
+
+    expect(response!.status).toBe(500);
+    expect(mockRefundPayment).toHaveBeenCalledWith(
+      'pay-conflict',
+      15000,
+      'USD',
+      'Automatic refund: booking creation failed after payment'
+    );
+  });
+
+  it('logs a critical error (but still surfaces the original failure) when the auto-refund itself fails', async () => {
+    mockProcessPayment.mockResolvedValueOnce({
+      success: true,
+      orderId: 'order-conflict-2',
+      paymentId: 'pay-conflict-2',
+      status: 'COMPLETED',
+      amount: 15000,
+      currency: 'USD',
+    });
+    mockCreateBookingAtomic.mockRejectedValueOnce(new Error('Time slot conflicts with existing bookings'));
+    mockRefundPayment.mockRejectedValueOnce(new Error('Square refund API down'));
+
+    const response = await POST(buildRequest(baseRequestBody));
+
+    expect(response!.status).toBe(500);
+    expect(mockRefundPayment).toHaveBeenCalledTimes(1);
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      expect.stringContaining('CRITICAL'),
+      expect.any(Error)
+    );
+  });
+
+  it('syncs balanceDue/depositPaid/tipAmount on the existing booking when paying a remaining balance (regression: this path never wrote anything back to the booking)', async () => {
+    mockProcessPayment.mockResolvedValueOnce({
+      success: true,
+      orderId: 'order-balance',
+      paymentId: 'pay-balance',
+      status: 'COMPLETED',
+      amount: 5000,
+      currency: 'USD',
+    });
+    mockGetBooking.mockResolvedValueOnce({
+      id: 'booking-existing',
+      customer: { name: 'Jane Doe' },
+      balanceDue: 75,
+      tipAmount: 5,
+    });
+    mockUpdateBooking.mockResolvedValueOnce(undefined);
+
+    const response = await POST(buildRequest({
+      ...baseRequestBody,
+      amount: 5000,
+      tipAmount: 1000,
+      existingBookingId: 'booking-existing',
+      bookingData: undefined,
+    }));
+    const payload = await response!.json();
+
+    expect(response!.status).toBe(200);
+    expect(payload.bookingId).toBe('booking-existing');
+    expect(mockCreateBookingAtomic).not.toHaveBeenCalled();
+    expect(mockUpdateBooking).toHaveBeenCalledWith('booking-existing', {
+      depositPaid: true,
+      balanceDue: 25, // 75 - (5000 cents / 100)
+      tipAmount: 15, // 5 existing + (1000 cents / 100)
+    });
   });
 });
