@@ -173,7 +173,7 @@ describe('POST /api/payment/square-webhook', () => {
     });
   });
 
-  it('returns a no-match message and does not call updateBooking when no booking has this squarePaymentId', async () => {
+  it('returns a retryable (non-2xx) status and does not call updateBooking when no booking has this squarePaymentId yet (regression: a 200 here tells Square delivery succeeded, so it never retries — permanently stranding a booking created moments later in "pending" since nothing else ever confirms it)', async () => {
     mockGetBookingIdBySquarePaymentId.mockResolvedValueOnce(null);
     const event = createPaymentEvent('payment.updated', 'COMPLETED', 'pay-orphan');
     const request = buildRequest(event);
@@ -181,8 +181,8 @@ describe('POST /api/payment/square-webhook', () => {
     const response = await POST(request);
     const payload = await response.json();
 
-    expect(response.status).toBe(200);
-    expect(payload.message).toBe('No matching booking for this payment');
+    expect(response.status).toBe(404);
+    expect(payload.message).toBe('No matching booking for this payment yet');
     expect(mockUpdateBooking).not.toHaveBeenCalled();
   });
 

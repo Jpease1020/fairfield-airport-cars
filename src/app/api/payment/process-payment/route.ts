@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { processPayment, refundPayment } from '@/lib/services/square-service';
-import { getBooking, updateBooking } from '@/lib/services/booking-service';
+import { getBooking, updateBooking, claimPaymentForBookingCreation, getBookingIdBySquarePaymentId } from '@/lib/services/booking-service';
 import { recordBookingAttempt } from '@/lib/services/booking-attempts-service';
 import { sendBookingProblem } from '@/lib/services/notification-service';
 import { getAuthContext, requireOwnerOrAdmin } from '@/lib/utils/auth-server';
@@ -8,6 +8,22 @@ import { getQuote, isQuoteValid } from '@/lib/services/quote-service';
 import { paymentProcessRequestSchema } from '@/lib/contracts/booking-api';
 import { createPaidBookingAndNotify } from '@/lib/services/booking-orchestrator';
 import { enforceRateLimit } from '@/lib/security/rate-limit';
+
+// Brief retry window for a request that lost the claim race (see claimPaymentForBookingCreation)
+// to find the booking the winning request is creating for the same payment, instead of giving up
+// immediately and creating a duplicate. Firestore booking-creation is typically well under this.
+async function pollForBookingBySquarePaymentId(
+  squarePaymentId: string,
+  attempts = 5,
+  delayMs = 300
+): Promise<string | null> {
+  for (let attempt = 0; attempt < attempts; attempt++) {
+    const bookingId = await getBookingIdBySquarePaymentId(squarePaymentId);
+    if (bookingId) return bookingId;
+    await new Promise((resolve) => setTimeout(resolve, delayMs));
+  }
+  return null;
+}
 
 // Expects `amount` and `tipAmount` in CENTS (non-negative integers). Client must send cents to avoid over/undercharging.
 export async function POST(request: Request) {
@@ -127,6 +143,32 @@ export async function POST(request: Request) {
     let emailWarning: string | null = null;
 
     if (!bookingId && bookingData) {
+      // Square's idempotency key on processPayment() dedupes an identical retry down to one
+      // CHARGE (same paymentId returned both times), but doesn't stop this route from creating
+      // two separate BOOKINGS for that one payment — e.g. a double-clicked submit firing two
+      // requests with the same token before either resolves. Only the first request to claim
+      // this paymentId proceeds to create a booking; a losing request looks up (and returns) the
+      // winner's booking instead of creating a duplicate that reserves a second ride for one charge.
+      if (paymentResult.paymentId) {
+        const claimedPayment = await claimPaymentForBookingCreation(paymentResult.paymentId);
+        if (!claimedPayment) {
+          const winningBookingId = await pollForBookingBySquarePaymentId(paymentResult.paymentId);
+          if (winningBookingId) {
+            return NextResponse.json({
+              success: true,
+              bookingId: winningBookingId,
+              paymentId: paymentResult.paymentId,
+              status: paymentResult.status,
+              amount: paymentResult.amount,
+              currency: paymentResult.currency,
+              emailWarning: null,
+            });
+          }
+          // Couldn't find the winning booking within the poll window — extremely unlikely, but
+          // don't silently drop a paid customer's booking; fall through and create one anyway.
+        }
+      }
+
       const paymentEnrichedBookingData = {
         ...bookingData,
         squareOrderId: paymentResult.orderId,
@@ -164,10 +206,27 @@ export async function POST(request: Request) {
       // of silently leaving depositPaid/balanceDue exactly as they were before this payment.
       const currentBalanceDue = existingBooking.payment?.balanceDue ?? existingBooking.balanceDue ?? 0;
       const currentTipAmount = existingBooking.payment?.tipAmount ?? existingBooking.tipAmount ?? 0;
+      const newBalanceDue = Math.max(0, currentBalanceDue - amountCents / 100);
+      const newTipAmount = currentTipAmount + tipCents / 100;
       await updateBooking(bookingId, {
+        // Legacy top-level fields (still read directly in a few places).
         depositPaid: true,
-        balanceDue: Math.max(0, currentBalanceDue - amountCents / 100),
-        tipAmount: currentTipAmount + tipCents / 100,
+        balanceDue: newBalanceDue,
+        tipAmount: newTipAmount,
+        // Admin/helper code reads booking.payment.* preferentially (booking-helpers.ts,
+        // bookings-utils.ts) — Firestore's .update() replaces a nested object wholesale rather
+        // than merging it, so without this the legacy write above is silently shadowed and the
+        // admin dashboard keeps showing the stale pre-payment balance/deposit/tip state.
+        payment: {
+          depositAmount: existingBooking.payment?.depositAmount ?? null,
+          squareOrderId: existingBooking.payment?.squareOrderId,
+          squarePaymentId: existingBooking.payment?.squarePaymentId,
+          tipPercent: existingBooking.payment?.tipPercent ?? 0,
+          totalAmount: existingBooking.payment?.totalAmount ?? 0,
+          depositPaid: true,
+          balanceDue: newBalanceDue,
+          tipAmount: newTipAmount,
+        },
       });
     }
 

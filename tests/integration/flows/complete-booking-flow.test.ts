@@ -68,6 +68,8 @@ vi.mock('@/lib/services/booking-service', () => ({
     status: 'pending',
   }),
   updateBooking: vi.fn().mockResolvedValue(undefined),
+  claimPaymentForBookingCreation: vi.fn().mockResolvedValue(true),
+  getBookingIdBySquarePaymentId: vi.fn().mockResolvedValue(null),
 }));
 
 vi.mock('@/lib/services/booking-attempts-service', () => ({

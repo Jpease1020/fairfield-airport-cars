@@ -68,8 +68,13 @@ export async function POST(req: Request) {
     // we stored on it when the charge was originally made.
     const bookingId = await getBookingIdBySquarePaymentId(payment.id);
     if (!bookingId) {
-      console.error('Square webhook: no booking found for payment', payment.id);
-      return NextResponse.json({ message: 'No matching booking for this payment' });
+      // Square can deliver this webhook before /api/payment/process-payment finishes writing
+      // squarePaymentId onto the booking (payment capture and our own booking-creation write are
+      // two independent races). A 200 here tells Square delivery succeeded, so it never retries —
+      // permanently stranding that booking in 'pending' even though it (will have) paid. A non-2xx
+      // makes Square redeliver on its own retry schedule, by which point the booking should exist.
+      console.error('Square webhook: no booking found yet for payment', payment.id, '- requesting retry');
+      return NextResponse.json({ message: 'No matching booking for this payment yet' }, { status: 404 });
     }
 
     const tipCents = (payment as any).tip_money?.amount ?? (payment as any).tipMoney?.amount ?? 0;
