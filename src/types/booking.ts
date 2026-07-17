@@ -22,6 +22,11 @@ export interface TripDetails {
   tipAmount?: number;
   tipPercent?: number;
   totalFare?: number;
+  // Traffic-adjusted trip duration from the quote (see QuoteData.durationMinutes), carried onto
+  // the booking so driver-schedule conflict checks can size the occupied slot to the real trip
+  // instead of a flat assumption. Absent on bookings created before this field existed, and on
+  // exception bookings that skip the quote step — callers should fall back to a sane default.
+  estimatedMinutes?: number;
 }
 
 export interface FlightInfo {

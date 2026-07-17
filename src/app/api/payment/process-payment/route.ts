@@ -106,6 +106,16 @@ export async function POST(request: Request) {
           providedAmountCents: amountCents,
         }, { status: 409 });
       }
+
+      // Carry the quote's real trip duration onto the booking so the driver-schedule conflict
+      // check sizes the occupied slot to the actual trip instead of a flat assumption — this
+      // quote lookup already happens for the amount check above, so this is free.
+      if (bookingData.trip) {
+        bookingData = {
+          ...bookingData,
+          trip: { ...bookingData.trip, estimatedMinutes: quote.estimatedMinutes },
+        };
+      }
     }
 
     // createPaidBookingAndNotify (called below, after the charge) skips its own copy of this

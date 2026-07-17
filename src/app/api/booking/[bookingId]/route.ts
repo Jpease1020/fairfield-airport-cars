@@ -5,6 +5,8 @@ import { getBooking } from '@/lib/services/booking-service';
 import { driverSchedulingService } from '@/lib/services/driver-scheduling-service';
 import { FieldValue } from 'firebase-admin/firestore';
 import { requireOwnerAdminOrTrackingToken } from '@/lib/utils/auth-server';
+import { getBusinessDateString, getBusinessTimeString } from '@/lib/utils/booking-date-time';
+import { resolveRideDurationMinutes } from '@/lib/utils/ride-duration';
 
 export async function GET(
   request: NextRequest,
@@ -179,12 +181,13 @@ export async function PUT(
     // Handle pickup date/time update (requires conflict check)
     let dateTimeChanged = false;
     let newPickupDateTime: Date | null = null;
+    let oldPickupDateTime: Date | null = null;
     if (updates.pickupDateTime) {
       newPickupDateTime = new Date(updates.pickupDateTime);
-      const oldPickupDateTime = existingBooking.trip?.pickupDateTime 
-        ? new Date(existingBooking.trip.pickupDateTime) 
+      oldPickupDateTime = existingBooking.trip?.pickupDateTime
+        ? new Date(existingBooking.trip.pickupDateTime)
         : (existingBooking.pickupDateTime ? new Date(existingBooking.pickupDateTime) : null);
-      
+
       if (oldPickupDateTime && newPickupDateTime.getTime() !== oldPickupDateTime.getTime()) {
         // Check 24-hour advance notice
         const now = new Date();
@@ -193,28 +196,6 @@ export async function PUT(
           return NextResponse.json(
             { error: 'Booking changes must be made at least 24 hours in advance' },
             { status: 400 }
-          );
-        }
-
-        // Check for scheduling conflicts (exclude current booking)
-        const dateStr = newPickupDateTime.toISOString().split('T')[0];
-        const startTime = newPickupDateTime.toTimeString().slice(0, 5);
-        const endTime = new Date(newPickupDateTime.getTime() + 2 * 60 * 60 * 1000).toTimeString().slice(0, 5);
-        
-        const conflictCheck = await driverSchedulingService.checkBookingConflicts(
-          dateStr,
-          startTime,
-          endTime,
-          bookingId // Exclude current booking from conflict check
-        );
-
-        if (conflictCheck.hasConflict) {
-          return NextResponse.json(
-            { 
-              error: 'Time slot conflicts with existing bookings',
-              suggestedTimes: conflictCheck.suggestedTimeSlots
-            },
-            { status: 409 }
           );
         }
 
@@ -315,43 +296,50 @@ export async function PUT(
       }
     }
 
-    // Update booking in Firestore
-    await db.collection('bookings').doc(bookingId).update(updateData);
+    // If date/time changed, atomically re-check for conflicts and move the schedule slot BEFORE
+    // writing the booking record — otherwise a conflict discovered only at the scheduling step
+    // would leave the booking doc already showing the new time while the old slot was never
+    // actually freed and the new one never actually reserved (or, with the old non-atomic
+    // cancel-then-book sequence, could silently clobber a slot someone else booked in between).
+    if (dateTimeChanged && newPickupDateTime && oldPickupDateTime) {
+      const oldDateStr = getBusinessDateString(oldPickupDateTime);
+      const newDateStr = getBusinessDateString(newPickupDateTime);
+      const startTime = getBusinessTimeString(newPickupDateTime);
+      const rideDurationMinutes = resolveRideDurationMinutes(existingTrip?.estimatedMinutes);
+      const endTime = getBusinessTimeString(new Date(newPickupDateTime.getTime() + rideDurationMinutes * 60 * 1000));
 
-    // If date/time changed, update driver schedule
-    if (dateTimeChanged && newPickupDateTime) {
-      const oldPickupDateTime = existingBooking.trip?.pickupDateTime 
-        ? new Date(existingBooking.trip.pickupDateTime) 
-        : (existingBooking.pickupDateTime ? new Date(existingBooking.pickupDateTime) : null);
-      
-      if (oldPickupDateTime) {
-        // Remove old time slot
-        await driverSchedulingService.cancelBooking(bookingId);
-        
-        // Book new time slot
-        const dateStr = newPickupDateTime.toISOString().split('T')[0];
-        const startTime = newPickupDateTime.toTimeString().slice(0, 5);
-        const endTime = new Date(newPickupDateTime.getTime() + 2 * 60 * 60 * 1000).toTimeString().slice(0, 5);
-        
-        const driverId = existingBooking.driverId || 'gregg-driver-001';
-        const driverName = existingBooking.driverName || 'Driver';
-        const customerName = existingBooking.customer?.name || existingBooking.name || 'Customer';
-        const pickupAddress = updates.pickup?.address || existingBooking.trip?.pickup?.address || existingBooking.pickupLocation || '';
-        const dropoffAddress = updates.dropoff?.address || existingBooking.trip?.dropoff?.address || existingBooking.dropoffLocation || '';
-        
-        await driverSchedulingService.bookTimeSlot(
-          driverId,
-          driverName,
-          dateStr,
-          startTime,
-          endTime,
-          bookingId,
-          customerName,
-          pickupAddress,
-          dropoffAddress
+      const driverId = existingBooking.driverId || 'gregg-driver-001';
+      const driverName = existingBooking.driverName || 'Driver';
+      const customerName = existingBooking.customer?.name || existingBooking.name || 'Customer';
+      const pickupAddress = updates.pickup?.address || existingBooking.trip?.pickup?.address || existingBooking.pickupLocation || '';
+      const dropoffAddress = updates.dropoff?.address || existingBooking.trip?.dropoff?.address || existingBooking.dropoffLocation || '';
+
+      const rescheduleResult = await driverSchedulingService.rescheduleBookingAtomic({
+        driverId,
+        driverName,
+        oldDate: oldDateStr,
+        newDate: newDateStr,
+        startTime,
+        endTime,
+        bookingId,
+        customerName,
+        pickupLocation: pickupAddress,
+        dropoffLocation: dropoffAddress,
+      });
+
+      if (!rescheduleResult.success) {
+        return NextResponse.json(
+          {
+            error: 'Time slot conflicts with existing bookings',
+            suggestedTimes: rescheduleResult.conflict.suggestedTimeSlots
+          },
+          { status: 409 }
         );
       }
     }
+
+    // Update booking in Firestore — only reached once the schedule change (if any) is secured.
+    await db.collection('bookings').doc(bookingId).update(updateData);
 
     // Get updated booking
     const updatedBooking = await getBooking(bookingId);

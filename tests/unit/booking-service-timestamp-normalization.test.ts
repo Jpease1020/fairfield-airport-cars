@@ -23,11 +23,6 @@ vi.mock('@/utils/booking-id-generator', () => ({
   generateShortBookingId: vi.fn(() => 'booking_123'),
 }));
 
-vi.mock('@/lib/services/booking-availability', () => ({
-  isTimeSlotAvailable: vi.fn(),
-  getAvailableDrivers: vi.fn(),
-}));
-
 vi.mock('@/lib/services/booking-cancellation', () => ({
   cancelBooking: vi.fn(),
 }));

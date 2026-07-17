@@ -90,9 +90,13 @@ function formatCoordsForHash(coords: { lat: number; lng: number } | null | undef
   return `${coords.lat.toFixed(5)},${coords.lng.toFixed(5)}`;
 }
 
-async function validateQuoteForSubmit(payload: SubmitBookingRequest): Promise<void> {
+// Returns the matched quote (not void) so the caller can carry its estimatedMinutes — the
+// traffic-adjusted duration the quote was priced and availability-checked with — onto the
+// booking record for scheduling. Without this, a normal (quoted) booking never records a
+// per-trip duration at all and every schedule slot silently falls back to the flat default.
+async function validateQuoteForSubmit(payload: SubmitBookingRequest): Promise<{ estimatedMinutes?: number } | null> {
   if (!payload.quoteId) {
-    return;
+    return null;
   }
 
   const quote = await getQuote(payload.quoteId);
@@ -162,6 +166,8 @@ async function validateQuoteForSubmit(payload: SubmitBookingRequest): Promise<vo
       providedFare: payload.fare,
     });
   }
+
+  return quote;
 }
 
 function parseTimeSlotConflict(errorMessage: string): string[] {
@@ -268,7 +274,7 @@ export async function submitBookingOrchestration(
     }
   }
 
-  await validateQuoteForSubmit(payload);
+  const matchedQuote = await validateQuoteForSubmit(payload);
 
   try {
     getAdminDb();
@@ -300,6 +306,10 @@ export async function submitBookingOrchestration(
       tipAmount: 0,
       tipPercent: 0,
       totalFare: fare,
+      // The quote's estimatedMinutes is already the traffic-adjusted duration it was priced and
+      // availability-checked with (see quote/route.ts) — carry it onto the booking so scheduling
+      // reserves that same slot length, not the flat default a missing value would fall back to.
+      estimatedMinutes: matchedQuote?.estimatedMinutes,
     },
     customer: {
       name: customer.name,

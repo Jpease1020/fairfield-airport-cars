@@ -6,6 +6,8 @@ import { driverSchedulingService } from '@/lib/services/driver-scheduling-servic
 import { classifyTrip, isAirportLocation } from '@/lib/services/service-area-validation';
 import { quoteRequestSchema, quoteResponseSchema } from '@/lib/contracts/booking-api';
 import { enforceRateLimit } from '@/lib/security/rate-limit';
+import { getBusinessDateString, getBusinessTimeString } from '@/lib/utils/booking-date-time';
+import { resolveRideDurationMinutes } from '@/lib/utils/ride-duration';
 
 const mapsClient = new Client({});
 
@@ -147,11 +149,13 @@ export async function POST(request: Request) {
   let availabilityWarning: string | null = null;
   let suggestedTimes: string[] = [];
   try {
-    const dateStr = pickupDateTime.toISOString().split('T')[0];
-    const startTime = pickupDateTime.toTimeString().slice(0, 5);
-    // Estimate end time: pickup time + 2 hours for the ride
-    const endTime = new Date(pickupDateTime.getTime() + 2 * 60 * 60 * 1000).toTimeString().slice(0, 5);
-    
+    // Business-local date/time, not server-local — the server runs in UTC in production, so a
+    // late-evening Eastern pickup would otherwise bucket into the wrong day's schedule.
+    const dateStr = getBusinessDateString(pickupDateTime);
+    const startTime = getBusinessTimeString(pickupDateTime);
+    const rideDurationMinutes = resolveRideDurationMinutes(Math.round(durationTrafficMinutes));
+    const endTime = getBusinessTimeString(new Date(pickupDateTime.getTime() + rideDurationMinutes * 60 * 1000));
+
     const conflictCheck = await driverSchedulingService.checkBookingConflicts(
       dateStr,
       startTime,
@@ -184,6 +188,8 @@ export async function POST(request: Request) {
       // Reflect the duration the fare is actually billed on (with traffic), not the free-flow
       // duration — otherwise the displayed trip time never reconciles with the charged fare
       // during rush hour (customer sees "20 min" but is billed for a 35-minute traffic duration).
+      // This is also the value scheduling uses to size the driver's slot for this ride (see
+      // booking-orchestrator.ts), so it must stay the traffic-adjusted number.
       estimatedMinutes: Math.round(durationTrafficMinutes),
       price: fare,
       fareType,
