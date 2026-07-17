@@ -163,7 +163,10 @@ export const submitBookingSuccessResponseSchema = z.object({
 export const paymentProcessRequestSchema = z.object({
   paymentToken: z.string().min(1),
   amount: z.number(),
-  currency: z.string().min(1),
+  // The business's Square account only settles in USD — accepting any other currency string
+  // would either fail confusingly deep inside the Square API call or, worse, succeed against
+  // the wrong merchant settlement currency. Restrict to what's actually supported.
+  currency: z.literal('USD'),
   bookingData: z.record(z.string(), z.unknown()).optional(),
   existingBookingId: z.string().optional(),
   tipAmount: z.number().optional().default(0),

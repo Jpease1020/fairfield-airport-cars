@@ -7,7 +7,7 @@ export async function generateStaticParams() {
 }
 
 // Enable ISR for dynamic content updates
-export const revalidate = 1800; // Revalidate every 30 minutes (more frequent for admin)
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata() {
   return {

@@ -7,6 +7,8 @@ import {
   normalizePhone,
   OTP_MIN_INTERVAL_SECONDS,
   OTP_TTL_MINUTES,
+  OTP_PHONE_LOCKOUT_THRESHOLD,
+  OTP_PHONE_LOCKOUT_WINDOW_MS,
 } from '@/lib/utils/auth-session';
 import { enforceRateLimit } from '@/lib/security/rate-limit';
 
@@ -40,9 +42,21 @@ export async function POST(request: NextRequest) {
 
     const rateDocRef = db.collection('authOtpRequests').doc(phone);
     const rateDoc = await rateDocRef.get();
-    const lastSentAt = rateDoc.exists ? rateDoc.data()?.lastSentAt?.toDate?.() || rateDoc.data()?.lastSentAt : null;
+    const rateData = rateDoc.data();
+    const lastSentAt = rateDoc.exists ? rateData?.lastSentAt?.toDate?.() || rateData?.lastSentAt : null;
     if (lastSentAt && now.getTime() - new Date(lastSentAt).getTime() < OTP_MIN_INTERVAL_SECONDS * 1000) {
       return NextResponse.json({ error: 'Please wait before requesting another code.' }, { status: 429 });
+    }
+
+    // Requesting a new code used to fully reset the per-code attempts counter, so an attacker
+    // could always regenerate a fresh 5-guess budget instead of ever hitting a real lockout.
+    // This checks the cumulative phone-level failure count (tracked in verify-otp, and NOT reset
+    // by issuing a new code) before sending another one.
+    const windowStart = rateData?.failedAttemptsWindowStart?.toDate?.() ?? rateData?.failedAttemptsWindowStart;
+    const windowActive = windowStart && now.getTime() - new Date(windowStart).getTime() <= OTP_PHONE_LOCKOUT_WINDOW_MS;
+    const failedAttempts = windowActive ? (rateData?.failedAttempts || 0) : 0;
+    if (failedAttempts >= OTP_PHONE_LOCKOUT_THRESHOLD) {
+      return NextResponse.json({ error: 'Too many failed attempts. Please try again later.' }, { status: 429 });
     }
 
     const code = generateOtp();

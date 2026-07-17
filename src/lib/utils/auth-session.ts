@@ -6,6 +6,12 @@ export const AUTH_SESSION_COOKIE = 'booking_session';
 export const AUTH_SESSION_TTL_DAYS = 30;
 export const OTP_TTL_MINUTES = 10;
 export const OTP_MIN_INTERVAL_SECONDS = 60;
+// Requesting a new OTP used to fully reset the per-code attempts counter to 0, so the real
+// lockout only ever bounded guesses against ONE disposable code, not the phone number overall —
+// an attacker could just request a fresh code every time they exhausted MAX_ATTEMPTS. This tracks
+// cumulative failed guesses per phone, independent of which code is currently active.
+export const OTP_PHONE_LOCKOUT_THRESHOLD = 15;
+export const OTP_PHONE_LOCKOUT_WINDOW_MS = 60 * 60_000;
 
 const getSecret = (): string | null => {
   return process.env.AUTH_SESSION_SECRET || process.env.AUTH_TOKEN_SECRET || null;

@@ -17,7 +17,13 @@ export const AdminNavigation: React.FC = () => {
   const currentPath = pathname ?? '';
   const handleLogout = async () => {
     try {
-      await auth.signOut();
+      // auth.signOut() only clears Firebase client auth state — the app's own booking_session
+      // cookie (set by the OTP/magic-link flow) is separate and must be cleared server-side too,
+      // or the session stays valid for up to 30 days despite the user believing they logged out.
+      await Promise.all([
+        auth.signOut(),
+        fetch('/api/auth/logout', { method: 'POST' }),
+      ]);
       window.location.href = '/';
     } catch (error) {
       console.error('Logout failed:', error);
