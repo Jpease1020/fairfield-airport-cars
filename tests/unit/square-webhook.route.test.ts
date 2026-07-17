@@ -1,12 +1,26 @@
 import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
-import { updateBooking } from '@/lib/services/booking-service';
+import { updateBooking, getBookingIdBySquarePaymentId } from '@/lib/services/booking-service';
 import crypto from 'crypto';
 
 vi.mock('@/lib/services/booking-service', () => ({
   updateBooking: vi.fn(),
+  getBookingIdBySquarePaymentId: vi.fn(),
+}));
+
+const processedEventGet = vi.fn().mockResolvedValue({ exists: false });
+const processedEventSet = vi.fn().mockResolvedValue(undefined);
+const getAdminDb = vi.fn(() => ({
+  collection: vi.fn(() => ({
+    doc: vi.fn(() => ({ get: processedEventGet, set: processedEventSet })),
+  })),
+}));
+
+vi.mock('@/lib/utils/firebase-admin', () => ({
+  getAdminDb,
 }));
 
 const mockUpdateBooking = updateBooking as unknown as ReturnType<typeof vi.fn>;
+const mockGetBookingIdBySquarePaymentId = getBookingIdBySquarePaymentId as unknown as ReturnType<typeof vi.fn>;
 
 let POST: typeof import('@/app/api/payment/square-webhook/route').POST;
 
@@ -44,14 +58,15 @@ const buildRequest = (body: Record<string, unknown>, signature?: string) => {
 const createPaymentEvent = (
   type: string,
   status: string,
-  orderId?: string,
+  paymentId?: string,
   tipAmount?: number
 ) => ({
   type,
   data: {
     object: {
       payment: {
-        order_id: orderId,
+        id: paymentId,
+        order_id: paymentId ? `square-order-${paymentId}` : undefined,
         status,
         ...(tipAmount !== undefined && { tip_money: { amount: tipAmount } }),
       },
@@ -64,6 +79,8 @@ describe('POST /api/payment/square-webhook', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    processedEventGet.mockResolvedValue({ exists: false });
+    processedEventSet.mockResolvedValue(undefined);
     consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
@@ -72,7 +89,7 @@ describe('POST /api/payment/square-webhook', () => {
   });
 
   it('returns 401 when signature is invalid', async () => {
-    const event = createPaymentEvent('payment.updated', 'COMPLETED', 'order-123');
+    const event = createPaymentEvent('payment.updated', 'COMPLETED', 'pay-123');
     const request = buildRequest(event, 'invalid-signature');
 
     const response = await POST(request);
@@ -83,7 +100,7 @@ describe('POST /api/payment/square-webhook', () => {
   });
 
   it('returns 401 when signature header is missing', async () => {
-    const event = createPaymentEvent('payment.updated', 'COMPLETED', 'order-123');
+    const event = createPaymentEvent('payment.updated', 'COMPLETED', 'pay-123');
     const rawBody = JSON.stringify(event);
 
     const request = {
@@ -113,18 +130,18 @@ describe('POST /api/payment/square-webhook', () => {
   });
 
   it('ignores payment events that are not COMPLETED', async () => {
-    const event = createPaymentEvent('payment.updated', 'PENDING', 'order-123');
+    const event = createPaymentEvent('payment.updated', 'PENDING', 'pay-123');
     const request = buildRequest(event);
 
     const response = await POST(request);
     const payload = await response.json();
 
     expect(response.status).toBe(200);
-    expect(payload.message).toBe('Payment not completed or missing order id');
+    expect(payload.message).toBe('Payment not completed or missing payment id');
     expect(mockUpdateBooking).not.toHaveBeenCalled();
   });
 
-  it('ignores payment events missing order_id', async () => {
+  it('ignores payment events missing payment id (regression: previously checked order_id, which Square never ties to our booking ID)', async () => {
     const event = createPaymentEvent('payment.updated', 'COMPLETED', undefined);
     const request = buildRequest(event);
 
@@ -132,32 +149,47 @@ describe('POST /api/payment/square-webhook', () => {
     const payload = await response.json();
 
     expect(response.status).toBe(200);
-    expect(payload.message).toBe('Payment not completed or missing order id');
+    expect(payload.message).toBe('Payment not completed or missing payment id');
     expect(mockUpdateBooking).not.toHaveBeenCalled();
   });
 
-  it('confirms booking on valid payment.updated event', async () => {
+  it('looks up the booking by squarePaymentId rather than trusting order_id as the booking ID (regression: order_id is Square-internal and never matches our Firestore doc ID)', async () => {
+    mockGetBookingIdBySquarePaymentId.mockResolvedValueOnce('booking-456');
     mockUpdateBooking.mockResolvedValueOnce(undefined);
-    const event = createPaymentEvent('payment.updated', 'COMPLETED', 'booking-456');
+    const event = createPaymentEvent('payment.updated', 'COMPLETED', 'pay-456');
     const request = buildRequest(event);
 
     const response = await POST(request);
     const payload = await response.json();
 
+    expect(mockGetBookingIdBySquarePaymentId).toHaveBeenCalledWith('pay-456');
     expect(response.status).toBe(200);
     expect(payload.message).toBe('Booking confirmed');
     expect(mockUpdateBooking).toHaveBeenCalledWith('booking-456', {
       status: 'confirmed',
       depositPaid: true,
       balanceDue: 0,
-      tipAmount: undefined,
       updatedAt: expect.any(Date),
     });
   });
 
+  it('returns a retryable (non-2xx) status and does not call updateBooking when no booking has this squarePaymentId yet (regression: a 200 here tells Square delivery succeeded, so it never retries — permanently stranding a booking created moments later in "pending" since nothing else ever confirms it)', async () => {
+    mockGetBookingIdBySquarePaymentId.mockResolvedValueOnce(null);
+    const event = createPaymentEvent('payment.updated', 'COMPLETED', 'pay-orphan');
+    const request = buildRequest(event);
+
+    const response = await POST(request);
+    const payload = await response.json();
+
+    expect(response.status).toBe(404);
+    expect(payload.message).toBe('No matching booking for this payment yet');
+    expect(mockUpdateBooking).not.toHaveBeenCalled();
+  });
+
   it('confirms booking on valid payment.created event', async () => {
+    mockGetBookingIdBySquarePaymentId.mockResolvedValueOnce('booking-789');
     mockUpdateBooking.mockResolvedValueOnce(undefined);
-    const event = createPaymentEvent('payment.created', 'COMPLETED', 'booking-789');
+    const event = createPaymentEvent('payment.created', 'COMPLETED', 'pay-789');
     const request = buildRequest(event);
 
     const response = await POST(request);
@@ -171,9 +203,22 @@ describe('POST /api/payment/square-webhook', () => {
     }));
   });
 
-  it('extracts tip amount from payment event', async () => {
+  it('does not set tipAmount at all when there is no tip (regression: previously set tipAmount: undefined, which Firestore Admin SDK rejects and throws on)', async () => {
+    mockGetBookingIdBySquarePaymentId.mockResolvedValueOnce('booking-no-tip');
     mockUpdateBooking.mockResolvedValueOnce(undefined);
-    const event = createPaymentEvent('payment.updated', 'COMPLETED', 'booking-tip', 500); // $5.00 tip
+    const event = createPaymentEvent('payment.updated', 'COMPLETED', 'pay-no-tip');
+    const request = buildRequest(event);
+
+    await POST(request);
+
+    const updateArg = mockUpdateBooking.mock.calls[0][1];
+    expect('tipAmount' in updateArg).toBe(false);
+  });
+
+  it('extracts tip amount from payment event', async () => {
+    mockGetBookingIdBySquarePaymentId.mockResolvedValueOnce('booking-tip');
+    mockUpdateBooking.mockResolvedValueOnce(undefined);
+    const event = createPaymentEvent('payment.updated', 'COMPLETED', 'pay-tip', 500); // $5.00 tip
     const request = buildRequest(event);
 
     const response = await POST(request);
@@ -186,9 +231,24 @@ describe('POST /api/payment/square-webhook', () => {
     }));
   });
 
+  it('skips reprocessing an already-handled event (regression: no dedup previously existed at all)', async () => {
+    processedEventGet.mockResolvedValueOnce({ exists: true });
+    const event = createPaymentEvent('payment.updated', 'COMPLETED', 'pay-dup');
+    const request = buildRequest(event);
+
+    const response = await POST(request);
+    const payload = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(payload.message).toBe('Already processed');
+    expect(mockGetBookingIdBySquarePaymentId).not.toHaveBeenCalled();
+    expect(mockUpdateBooking).not.toHaveBeenCalled();
+  });
+
   it('returns 500 when updateBooking fails', async () => {
+    mockGetBookingIdBySquarePaymentId.mockResolvedValueOnce('booking-fail');
     mockUpdateBooking.mockRejectedValueOnce(new Error('Database error'));
-    const event = createPaymentEvent('payment.updated', 'COMPLETED', 'booking-fail');
+    const event = createPaymentEvent('payment.updated', 'COMPLETED', 'pay-fail');
     const request = buildRequest(event);
 
     const response = await POST(request);

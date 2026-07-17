@@ -1,6 +1,7 @@
 // Modern Square service using Web Payments SDK + Payments API
 import { SquareClient, SquareEnvironment } from 'square';
 import { v4 as uuidv4 } from 'uuid';
+import crypto from 'crypto';
 
 // Initialize Square client for server-side usage
 let squareClient: SquareClient | null = null;
@@ -59,6 +60,15 @@ export const processPayment = async (paymentToken: string, amount: number, curre
   });
 
   try {
+    // Derived from the charge's own immutable inputs (not a fresh random UUID) so a retried
+    // request — a lost response followed by a client or manual resubmit with the same
+    // paymentToken/amount/bookingId — produces the SAME key. Square then dedupes it against the
+    // first attempt instead of creating a second, distinct charge for the same booking.
+    const idempotencyKey = crypto
+      .createHash('sha256')
+      .update(`${paymentToken}:${amount}:${currency}:${bookingId}`)
+      .digest('hex');
+
     // Amount is already in cents (integer)
     const paymentResponse = await client.payments.create({
       sourceId: paymentToken,
@@ -66,7 +76,7 @@ export const processPayment = async (paymentToken: string, amount: number, curre
         amount: BigInt(amount),
         currency: currency as 'USD' | 'EUR' | 'GBP' | 'CAD',
       },
-      idempotencyKey: uuidv4(),
+      idempotencyKey,
       note: `Payment for booking ${bookingId}`,
       referenceId: bookingId,
       locationId: squareCredentials.locationId,

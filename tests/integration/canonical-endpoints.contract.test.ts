@@ -97,6 +97,8 @@ vi.mock('@/lib/services/square-service', () => ({
 
 vi.mock('@/lib/services/booking-service', () => ({
   getBooking: vi.fn().mockResolvedValue(null),
+  claimPaymentForBookingCreation: vi.fn().mockResolvedValue(true),
+  getBookingIdBySquarePaymentId: vi.fn().mockResolvedValue(null),
 }));
 
 vi.mock('@/lib/security/rate-limit', () => ({
