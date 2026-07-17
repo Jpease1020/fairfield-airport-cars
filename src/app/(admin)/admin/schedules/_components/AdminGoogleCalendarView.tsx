@@ -1,51 +1,46 @@
-import React from 'react';
-import { Box, Button, Container, H1, Stack, Text } from '@/design/ui';
+'use client';
 
-const BUSINESS_TIME_ZONE = 'America/New_York';
+import React, { useEffect, useState } from 'react';
+import { Box, Button, Container, H1, LoadingSpinner, Stack, Text } from '@/design/ui';
+import { authFetch } from '@/lib/utils/auth-fetch';
 
-function buildCalendarEmbedUrl() {
-  const explicitEmbedUrl = process.env.NEXT_PUBLIC_GOOGLE_CALENDAR_EMBED_URL;
-  if (explicitEmbedUrl) {
-    return explicitEmbedUrl;
-  }
-
-  const calendarId = process.env.NEXT_PUBLIC_GOOGLE_CALENDAR_ID || process.env.GOOGLE_CALENDAR_ID;
-  if (!calendarId || calendarId === 'primary') {
-    return null;
-  }
-
-  const params = new URLSearchParams({
-    src: calendarId,
-    ctz: BUSINESS_TIME_ZONE,
-    mode: 'WEEK',
-    showTitle: '0',
-    showPrint: '0',
-    showCalendars: '0',
-    showTabs: '1',
-    showTz: '0',
-    wkst: '1',
-  });
-
-  return `https://calendar.google.com/calendar/embed?${params.toString()}`;
-}
-
-function buildCalendarOpenUrl() {
-  const explicitOpenUrl = process.env.NEXT_PUBLIC_GOOGLE_CALENDAR_OPEN_URL;
-  if (explicitOpenUrl) {
-    return explicitOpenUrl;
-  }
-
-  const calendarId = process.env.NEXT_PUBLIC_GOOGLE_CALENDAR_ID || process.env.GOOGLE_CALENDAR_ID;
-  if (!calendarId || calendarId === 'primary') {
-    return 'https://calendar.google.com/calendar/u/0/r';
-  }
-
-  return `https://calendar.google.com/calendar/u/0?cid=${encodeURIComponent(calendarId)}`;
+interface CalendarEmbedConfig {
+  embedUrl: string | null;
+  openUrl: string;
+  timeZone: string;
 }
 
 export function AdminGoogleCalendarView() {
-  const embedUrl = buildCalendarEmbedUrl();
-  const openUrl = buildCalendarOpenUrl();
+  const [config, setConfig] = useState<CalendarEmbedConfig | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    authFetch('/api/admin/calendar-embed')
+      .then(async (res) => {
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}));
+          throw new Error(body?.error ?? `Failed to load calendar config (${res.status})`);
+        }
+        return res.json();
+      })
+      .then((data) => {
+        if (!cancelled) setConfig(data);
+      })
+      .catch((err) => {
+        console.error('Failed to load calendar embed config:', err);
+        if (!cancelled) setError(err instanceof Error ? err.message : 'Failed to load calendar config');
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <Container maxWidth="7xl" padding="xl">
@@ -59,43 +54,61 @@ export function AdminGoogleCalendarView() {
           </Stack>
         </Box>
 
-        <Stack direction="horizontal" spacing="md" align="center" wrap="wrap">
-          <Button
-            href={openUrl}
-            variant="primary"
-            text="Open in Google Calendar"
-          />
-          <Text color="secondary">
-            Time zone: Eastern Time
-          </Text>
-        </Stack>
-
-        {embedUrl ? (
-          <Box variant="elevated" padding="sm">
-            <iframe
-              src={embedUrl}
-              title="Google Calendar"
-              style={{
-                border: 0,
-                width: '100%',
-                minHeight: '920px',
-                borderRadius: '12px',
-                background: '#fff',
-              }}
-            />
-          </Box>
-        ) : (
+        {loading ? (
+          <Stack spacing="md" align="center">
+            <LoadingSpinner size="lg" />
+          </Stack>
+        ) : error ? (
           <Box variant="elevated" padding="lg">
             <Stack spacing="sm">
-              <Text weight="bold">Calendar embed is not configured.</Text>
+              <Text weight="bold" color="error">Failed to load calendar settings</Text>
+              <Text color="secondary">{error}</Text>
               <Text color="secondary">
-                Set `NEXT_PUBLIC_GOOGLE_CALENDAR_EMBED_URL` or `NEXT_PUBLIC_GOOGLE_CALENDAR_ID` in Vercel if you want the calendar to render inline here.
-              </Text>
-              <Text color="secondary">
-                Until then, use the button above to open Google Calendar directly.
+                If you were recently signed out, try refreshing the page and signing in again.
               </Text>
             </Stack>
           </Box>
+        ) : (
+          <>
+            <Stack direction="horizontal" spacing="md" align="center" wrap="wrap">
+              <Button
+                href={config?.openUrl}
+                variant="primary"
+                text="Open in Google Calendar"
+              />
+              <Text color="secondary">
+                Time zone: {config?.timeZone ?? 'Eastern Time'}
+              </Text>
+            </Stack>
+
+            {config?.embedUrl ? (
+              <Box variant="elevated" padding="sm">
+                <iframe
+                  src={config.embedUrl}
+                  title="Google Calendar"
+                  style={{
+                    border: 0,
+                    width: '100%',
+                    minHeight: '920px',
+                    borderRadius: '12px',
+                    background: '#fff',
+                  }}
+                />
+              </Box>
+            ) : (
+              <Box variant="elevated" padding="lg">
+                <Stack spacing="sm">
+                  <Text weight="bold">Calendar embed is not configured.</Text>
+                  <Text color="secondary">
+                    Set `NEXT_PUBLIC_GOOGLE_CALENDAR_EMBED_URL` or `NEXT_PUBLIC_GOOGLE_CALENDAR_ID` in Vercel if you want the calendar to render inline here.
+                  </Text>
+                  <Text color="secondary">
+                    Until then, use the button above to open Google Calendar directly.
+                  </Text>
+                </Stack>
+              </Box>
+            )}
+          </>
         )}
       </Stack>
     </Container>
