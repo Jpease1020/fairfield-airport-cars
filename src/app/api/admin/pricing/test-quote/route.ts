@@ -31,11 +31,13 @@ export async function POST(request: NextRequest) {
       personalDiscountPercent: pricingOverrides?.personalDiscountPercent ?? savedConfig.personalDiscountPercent,
     };
 
-    // Call Google Maps Distance Matrix
+    // Always geocode the address text, same as the real quote endpoint (quote/route.ts) — using
+    // client-supplied coordinates here would let this preview diverge from what a customer is
+    // actually charged, since nothing cross-checks that the coordinates correspond to the address.
     const response = await mapsClient.distancematrix({
       params: {
-        origins: [pickupCoords ? `${pickupCoords.lat},${pickupCoords.lng}` : origin],
-        destinations: [dropoffCoords ? `${dropoffCoords.lat},${dropoffCoords.lng}` : destination],
+        origins: [origin],
+        destinations: [destination],
         key: process.env.GOOGLE_MAPS_SERVER_API_KEY!,
         departure_time: new Date(Date.now() + 60 * 60 * 1000), // 1 hour from now for traffic estimate
         traffic_model: 'best_guess' as any,
@@ -51,28 +53,36 @@ export async function POST(request: NextRequest) {
     const durationMinutes = secondsToMinutes(el.duration.value);
     const durationTrafficMinutes = secondsToMinutes(el.duration_in_traffic?.value ?? el.duration.value);
 
-    // Calculate fare with breakdown
+    // Calculate fare with breakdown. Mirrors the real quote endpoint's rounding
+    // (src/app/api/booking/quote/route.ts): every stage stays unrounded and Math.ceil is applied
+    // exactly once at the end, so this preview matches what a customer is actually charged —
+    // this route previously ceil'd at each stage independently (a separate, re-rounded discount
+    // amount, then a re-rounded subtotal, then a re-rounded multiplier result), which could
+    // show the admin a slightly different fare than the real endpoint would produce.
     const basePortion = pricing.baseFare;
     const mileagePortion = distanceMiles * pricing.perMile;
     const timePortion = durationTrafficMinutes * pricing.perMinute;
-    let subtotal = Math.ceil(basePortion + mileagePortion + timePortion);
+    let rawFare = basePortion + mileagePortion + timePortion;
+    const preDiscountFare = rawFare;
 
     let personalDiscount = 0;
-    if (fareType === 'personal') {
-      personalDiscount = Math.ceil(subtotal * (pricing.personalDiscountPercent / 100));
-      subtotal = Math.ceil(subtotal - personalDiscount);
+    if (fareType === 'personal' && pricing.personalDiscountPercent > 0) {
+      rawFare = rawFare * (1 - pricing.personalDiscountPercent / 100);
+      personalDiscount = preDiscountFare - rawFare;
     }
 
     // Check airport return
     const isAirportPickup = isAirportLocation(origin, pickupCoords ?? null);
     const isAirportDropoff = isAirportLocation(destination, dropoffCoords ?? null);
     let returnMultiplierApplied = false;
-    let preMultiplierFare = subtotal;
+    const preMultiplierFare = rawFare;
 
     if (isAirportPickup && !isAirportDropoff) {
       returnMultiplierApplied = true;
-      subtotal = Math.ceil(subtotal * pricing.airportReturnMultiplier);
+      rawFare = rawFare * pricing.airportReturnMultiplier;
     }
+
+    const subtotal = Math.ceil(rawFare);
 
     return NextResponse.json({
       fare: subtotal,
@@ -83,10 +93,10 @@ export async function POST(request: NextRequest) {
         baseFare: Math.round(basePortion * 100) / 100,
         mileageCharge: Math.round(mileagePortion * 100) / 100,
         timeCharge: Math.round(timePortion * 100) / 100,
-        subtotalBeforeModifiers: Math.ceil(basePortion + mileagePortion + timePortion),
-        personalDiscount: personalDiscount > 0 ? personalDiscount : null,
+        subtotalBeforeModifiers: Math.ceil(preDiscountFare),
+        personalDiscount: personalDiscount > 0 ? Math.round(personalDiscount * 100) / 100 : null,
         returnMultiplier: returnMultiplierApplied ? pricing.airportReturnMultiplier : null,
-        preMultiplierFare: returnMultiplierApplied ? preMultiplierFare : null,
+        preMultiplierFare: returnMultiplierApplied ? Math.ceil(preMultiplierFare) : null,
       },
       isAirportPickup,
       isAirportDropoff,

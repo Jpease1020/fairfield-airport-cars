@@ -25,6 +25,7 @@ One ordered list merging the **Unified Plan** remainder and the **full audit** f
 | 3 | **Two-airport bookings not blocked** | `src/lib/services/service-area-validation.ts` | Business rule: one end must be home address. Reject airport-to-airport; return clear validation error. | [x] Done: Already implemented; unit test in place. |
 | 4 | **Midnight scheduling bug** | `src/lib/services/driver-scheduling-service.ts` | Prep-time calculation can span midnight incorrectly. Fix so conflicts across midnight are detected. | [x] Done: `checkDriverAvailability` now considers prep slots and uses `slotOverlapsRange` for midnight-spanning slots. |
 | 5 | **Refund logic not implemented** | `src/lib/services/booking-service.ts` (TODO) + cancel flow | Cancellations mark booking cancelled; ensure Square refund (or fee charge) is actually called and matches policy. Align with `cancel-booking/route.ts` fee tiers. | [x] Done: Refund processed in `cancelBooking` when API provides `refundAmount` + `squarePaymentId`; JSDoc clarified. |
+| 6 | **Firestore rules are still `allow read, write: if true` for every collection except `config` and `users.role`** | `firestore.rules` | Migrate the handful of routes that currently hit Firestore via the client SDK with no Firebase Auth session (`review-service.ts`'s reviews-submit route, `driver-service.ts`'s tracking-lookup route, plus the Admin-SDK-unavailable fallback paths in `quote-service.ts`/`driver-scheduling-service.ts`) to `firebase-admin/firestore`, then write real per-collection least-privilege rules for `bookings`, `driverSchedules`, `smsThreads`/`smsMessages`, etc. Blocked on that migration today — tightening rules first would 403 those routes. The public live-tracking page's direct `bookings/{id}` listener also needs a plan (a tracking-safe field subset, most likely) before `bookings` can be locked to admin-only. | [ ] Not started — role-escalation vector closed (`users/{uid}.role`/`permissions` now write-protected), everything else still open. |
 
 ---
 
@@ -87,6 +88,7 @@ One ordered list merging the **Unified Plan** remainder and the **full audit** f
 | 30 | **Validation consistency** | TripDetailsPhase vs ContactInfoPhase | Same pattern: provider state vs local state; align approach. |
 | 31 | **isMobile detection** | Multiple components | Single shared hook or util; reuse. |
 | 32 | **Hardcoded phone** | FlightInfoPhase (or similar) | Replace `(646) 221-6370` with CMS or config. |
+| 33 | **Fare formula duplicated** | `src/app/api/booking/quote/route.ts` vs `src/app/api/admin/pricing/test-quote/route.ts` | The base+mileage+time / discount / airport-multiplier / single-ceil-at-end calculation is hand-duplicated in both files with no shared helper. This is the exact bug class fixed 2026-07 (the admin preview had drifted from the real quote's rounding) — extract a shared `computeFare()` so a future rate/rounding change can't silently re-diverge between the two routes. |
 
 ---
 

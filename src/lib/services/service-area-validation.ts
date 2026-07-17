@@ -47,8 +47,6 @@ const SERVICE_AREA_CENTERS: ServiceAreaCenter[] = [
   },
 ];
 
-const AIRPORT_KEYWORDS = ['airport', 'terminal', 'intl', 'international'];
-
 const toRadians = (degrees: number) => (degrees * Math.PI) / 180;
 
 /**
@@ -82,23 +80,32 @@ export function isAirportLocation(
   address?: string | null,
   coords?: Coordinates | null
 ): boolean {
+  // Text match is checked first and unconditionally (not only as a coords-absent fallback).
+  // Nothing cross-validates client-supplied coordinates against the address text (the fare
+  // itself is now computed by geocoding the address server-side — see quote/route.ts — precisely
+  // because coordinates can't be trusted), so if this function trusted coordinates exclusively
+  // whenever they were present, a caller could keep a real airport address while sending
+  // fabricated coordinates far from any airport radius and silently dodge the return-trip
+  // multiplier. Text matching itself stays narrow — airport code, full official name, or a
+  // curated list of common colloquial names (see KNOWN_AIRPORTS aliases) — rather than generic
+  // keywords like "airport"/"terminal", which is what caused false positives on non-airport
+  // business names ("Airport Plaza Suites", "Terminal Ave") before.
   const normalizedAddress = address?.toLowerCase() ?? '';
-
   if (normalizedAddress.length > 0) {
-    if (AIRPORT_KEYWORDS.some(keyword => normalizedAddress.includes(keyword))) {
-      return true;
-    }
-
     for (const airport of KNOWN_AIRPORTS) {
       if (
         normalizedAddress.includes(airport.code.toLowerCase()) ||
-        normalizedAddress.includes(airport.name.toLowerCase())
+        normalizedAddress.includes(airport.name.toLowerCase()) ||
+        airport.aliases.some(alias => normalizedAddress.includes(alias))
       ) {
         return true;
       }
     }
   }
 
+  // Coordinates are an additional, independent signal (not a replacement for the text check
+  // above): a real airport address phrased in a way the text match doesn't cover can still be
+  // caught by genuine proximity to a known airport.
   if (coords && isFiniteNumber(coords.lat) && isFiniteNumber(coords.lng)) {
     return KNOWN_AIRPORTS.some(airport => {
       const distance = distanceMilesBetweenCoordinates(

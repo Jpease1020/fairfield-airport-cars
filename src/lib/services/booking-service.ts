@@ -319,6 +319,36 @@ export const getBooking = async (bookingId: string): Promise<Booking | null> => 
   } as Booking;
 };
 
+// Look up a booking by the Square payment ID stored on it at creation/payment time.
+// Square webhook events are keyed by payment.id, not by our own booking ID, so this is the
+// only reliable way for the webhook to find the right booking to confirm.
+export const getBookingIdBySquarePaymentId = async (squarePaymentId: string): Promise<string | null> => {
+  const db = getAdminDb();
+  const snapshot = await db.collection('bookings').where('squarePaymentId', '==', squarePaymentId).limit(1).get();
+  if (snapshot.empty) return null;
+  return snapshot.docs[0].id;
+};
+
+// Atomically claims the right to create a booking for a given Square payment. Square's
+// idempotency key on processPayment() dedupes an identical retry down to one CHARGE, but doesn't
+// stop the app from creating two separate BOOKINGS for that one payment (e.g. a double-clicked
+// submit firing two /api/payment/process-payment requests with the same token before either
+// resolves) — both requests would get back the same deduped paymentId and, without this claim,
+// both would go on to create their own booking. `.create()` throws if the doc already exists,
+// so only the first caller for a given paymentId gets `true`; every other concurrent caller
+// should look up the winner's booking instead of creating a duplicate.
+export const claimPaymentForBookingCreation = async (squarePaymentId: string): Promise<boolean> => {
+  const db = getAdminDb();
+  try {
+    await db.collection('paymentBookingClaims').doc(squarePaymentId).create({
+      claimedAt: FieldValue.serverTimestamp(),
+    });
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 // Get all bookings with filtering and sorting
 export const getBookings = async (
   status?: Booking['status'],

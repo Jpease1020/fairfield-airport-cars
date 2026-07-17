@@ -7,7 +7,7 @@ import {
 import EditBookingClient from './EditBookingClient';
 
 // Enable ISR for dynamic content updates
-export const revalidate = 3600; // Revalidate every hour
+export const dynamic = 'force-dynamic';
 
 // Main page component (Server Component)
 export default async function EditBookingPage({ params }: { params: Promise<{ id: string }> }) {

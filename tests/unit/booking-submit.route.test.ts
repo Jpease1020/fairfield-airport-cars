@@ -125,6 +125,8 @@ describe('POST /api/booking/submit', () => {
     vi.mocked(quoteService.getQuote).mockResolvedValue({
       pickupAddress: basePayload.trip.pickup.address,
       dropoffAddress: basePayload.trip.dropoff.address,
+      pickupCoords: basePayload.trip.pickup.coordinates,
+      dropoffCoords: basePayload.trip.dropoff.coordinates,
       pickupDateTime: basePayload.trip.pickupDateTime,
       fareType: basePayload.trip.fareType,
       price: basePayload.fare,
@@ -206,10 +208,54 @@ describe('POST /api/booking/submit', () => {
     expect(payload.code).toBe('ROUTE_CHANGED');
   });
 
+  it('does not spuriously flag ROUTE_CHANGED when neither the quote nor the submit request has real coordinates (regression: quote creation defaults missing coordinates to {lat:0,lng:0} while a coordinate-less submit payload serializes as null, and the two used to hash differently for an otherwise-identical trip)', async () => {
+    vi.mocked(quoteService.getQuote).mockResolvedValue({
+      pickupAddress: basePayload.trip.pickup.address,
+      dropoffAddress: basePayload.trip.dropoff.address,
+      pickupCoords: { lat: 0, lng: 0 },
+      dropoffCoords: { lat: 0, lng: 0 },
+      pickupDateTime: basePayload.trip.pickupDateTime,
+      fareType: basePayload.trip.fareType,
+      price: basePayload.fare,
+    } as any);
+
+    vi.mocked(bookingService.createBookingAtomic).mockResolvedValue({ bookingId: 'booking_nocoords' });
+    vi.mocked(bookingService.getBooking).mockResolvedValue({
+      id: 'booking_nocoords',
+      confirmation: { token: 'tok_nocoords' },
+      customer: { email: basePayload.customer.email },
+      trip: {
+        pickup: { address: basePayload.trip.pickup.address },
+        dropoff: { address: basePayload.trip.dropoff.address },
+        pickupDateTime: basePayload.trip.pickupDateTime,
+      },
+      payment: { totalAmount: basePayload.fare },
+      status: 'pending',
+    } as any);
+
+    const response = await POST(
+      buildRequest({
+        ...basePayload,
+        quoteId: 'quote_no_coords',
+        trip: {
+          ...basePayload.trip,
+          pickup: { ...basePayload.trip.pickup, coordinates: null },
+          dropoff: { ...basePayload.trip.dropoff, coordinates: null },
+        },
+      })
+    );
+    const payload = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(payload.code).not.toBe('ROUTE_CHANGED');
+  });
+
   it('returns FARE_MISMATCH when submitted fare does not match quote fare tolerance', async () => {
     vi.mocked(quoteService.getQuote).mockResolvedValue({
       pickupAddress: basePayload.trip.pickup.address,
       dropoffAddress: basePayload.trip.dropoff.address,
+      pickupCoords: basePayload.trip.pickup.coordinates,
+      dropoffCoords: basePayload.trip.dropoff.coordinates,
       pickupDateTime: basePayload.trip.pickupDateTime,
       fareType: basePayload.trip.fareType,
       price: 200,
@@ -234,7 +280,9 @@ describe('POST /api/booking/submit', () => {
     vi.mocked(quoteService.getQuote).mockResolvedValue({
       pickupAddress: basePayload.trip.pickup.address,
       dropoffAddress: basePayload.trip.dropoff.address,
-      pickupDateTime: '2026-03-02T13:00:00.000Z',
+      pickupCoords: basePayload.trip.pickup.coordinates,
+      dropoffCoords: basePayload.trip.dropoff.coordinates,
+      pickupDateTime: '2028-03-02T13:00:00.000Z',
       fareType: basePayload.trip.fareType,
       price: 120,
     } as any);
@@ -250,7 +298,7 @@ describe('POST /api/booking/submit', () => {
       trip: {
         pickup: { address: basePayload.trip.pickup.address },
         dropoff: { address: basePayload.trip.dropoff.address },
-        pickupDateTime: '2026-03-02T13:00:00.000Z',
+        pickupDateTime: '2028-03-02T13:00:00.000Z',
       },
       payment: { totalAmount: 120 },
       status: 'pending',
@@ -262,21 +310,21 @@ describe('POST /api/booking/submit', () => {
         quoteId: 'quote_123',
         trip: {
           ...basePayload.trip,
-          pickupDateTime: '2026-03-02T13:00:00.000Z',
+          pickupDateTime: '2028-03-02T13:00:00.000Z',
         },
       })
     );
 
     expect(response.status).toBe(200);
-    expect(sendAdminSms).toHaveBeenCalledWith(expect.stringContaining('3/2/2026, 8:00 AM'));
+    expect(sendAdminSms).toHaveBeenCalledWith(expect.stringContaining('3/2/2028, 8:00 AM'));
     expect(bookingService.createBookingAtomic).toHaveBeenCalledWith(
       expect.objectContaining({
         bookingTimeline: expect.arrayContaining([
           expect.objectContaining({
             source: 'submit',
             event: 'booking_submit_received',
-            normalizedPickupDateTimeIso: '2026-03-02T13:00:00.000Z',
-            businessPickupDateTime: '3/2/2026, 8:00 AM',
+            normalizedPickupDateTimeIso: '2028-03-02T13:00:00.000Z',
+            businessPickupDateTime: '3/2/2028, 8:00 AM',
           }),
         ]),
       })

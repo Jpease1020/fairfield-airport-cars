@@ -38,6 +38,14 @@ interface CreatePaidBookingParams {
   tipCents: number;
   authUserId?: string | null;
   smokeTest?: boolean;
+  // Set by process-payment/route.ts, which already validated advance notice against the same
+  // pickupDateTime immediately before charging the card. Re-deriving Date.now() here again, after
+  // the charge has completed, checks against a LATER moving threshold than the pre-charge check
+  // did — a pickup that was just over 24h out when the pre-charge guard ran could fail this
+  // post-charge recheck purely because Square's own processing took long enough for the clock to
+  // cross the boundary, leaving a charged card needing a refund for a booking that was actually
+  // compliant when the customer submitted it.
+  skipMinimumNoticeCheck?: boolean;
 }
 
 interface CreatePaidBookingResult {
@@ -46,6 +54,15 @@ interface CreatePaidBookingResult {
 }
 
 const BOOKING_CREATE_TIMEOUT_MS = 50_000;
+const MINIMUM_ADVANCE_NOTICE_MS = 24 * 60 * 60 * 1000;
+
+// Shared by every booking-creation entry point (submitBookingOrchestration,
+// createPaidBookingAndNotify, and the payment route's pre-charge check) so the 24h rule and its
+// threshold can't drift between call sites the way separate copies of this comparison would.
+export function isAtLeastMinimumAdvanceNotice(pickupDateTime: Date): boolean {
+  const minPickupDateTime = new Date(Date.now() + MINIMUM_ADVANCE_NOTICE_MS);
+  return pickupDateTime >= minPickupDateTime;
+}
 
 function normalizeIso(value: Date | string): string {
   const parsed = value instanceof Date ? value : new Date(value);
@@ -58,7 +75,26 @@ function normalizeIso(value: Date | string): string {
   return parsed.toISOString();
 }
 
-async function validateQuoteForSubmit(payload: SubmitBookingRequest): Promise<{ estimatedMinutes?: number; durationTrafficMinutes?: number } | null> {
+// 5 decimal places is ~1.1m of precision — plenty to detect a genuinely different location
+// while tolerating floating-point representation noise between how the quote and submit steps
+// each serialize the same coordinate.
+//
+// {lat:0, lng:0} is treated the same as missing: quote/route.ts falls back to that exact object
+// when a quote is created with no real coordinates, while a submit payload made with no
+// coordinates serializes as null/undefined — without this, the two "no real coordinates"
+// representations would hash differently and a completely unmodified booking (same address,
+// same time, neither side ever had coordinates) would spuriously trip ROUTE_CHANGED. (0,0 sits
+// in the ocean off the coast of Africa — never a plausible real pickup/dropoff.)
+function formatCoordsForHash(coords: { lat: number; lng: number } | null | undefined): string {
+  if (!coords || (coords.lat === 0 && coords.lng === 0)) return 'none';
+  return `${coords.lat.toFixed(5)},${coords.lng.toFixed(5)}`;
+}
+
+// Returns the matched quote (not void) so the caller can carry its estimatedMinutes — the
+// traffic-adjusted duration the quote was priced and availability-checked with — onto the
+// booking record for scheduling. Without this, a normal (quoted) booking never records a
+// per-trip duration at all and every schedule slot silently falls back to the flat default.
+async function validateQuoteForSubmit(payload: SubmitBookingRequest): Promise<{ estimatedMinutes?: number } | null> {
   if (!payload.quoteId) {
     return null;
   }
@@ -92,14 +128,24 @@ async function validateQuoteForSubmit(payload: SubmitBookingRequest): Promise<{ 
   }
 
   const currentPickupDateTime = normalizeIso(payload.trip.pickupDateTime);
+  // Coordinates were previously left out of this hash entirely — only the address TEXT was
+  // checked for a match, so a submit request could carry different coordinates than what the
+  // quote was actually generated from with nothing catching the mismatch. The fare itself no
+  // longer depends on client-supplied coordinates (see quote/route.ts), but the coordinates still
+  // end up on the booking record used for driver navigation/tracking, so this remains worth
+  // catching as a data-integrity check even though it's no longer a fare-manipulation vector.
   const currentRouteHash = createHash('sha256')
     .update(
-      `${payload.trip.pickup.address}|${payload.trip.dropoff.address}|${currentPickupDateTime}|${payload.trip.fareType}`
+      `${payload.trip.pickup.address}|${formatCoordsForHash(payload.trip.pickup.coordinates)}|` +
+      `${payload.trip.dropoff.address}|${formatCoordsForHash(payload.trip.dropoff.coordinates)}|` +
+      `${currentPickupDateTime}|${payload.trip.fareType}`
     )
     .digest('hex');
   const storedRouteHash = createHash('sha256')
     .update(
-      `${quote.pickupAddress}|${quote.dropoffAddress}|${storedPickupDateTime}|${quote.fareType}`
+      `${quote.pickupAddress}|${formatCoordsForHash(quote.pickupCoords)}|` +
+      `${quote.dropoffAddress}|${formatCoordsForHash(quote.dropoffCoords)}|` +
+      `${storedPickupDateTime}|${quote.fareType}`
     )
     .digest('hex');
 
@@ -203,6 +249,17 @@ export async function submitBookingOrchestration(
   }
 
   if (!isExceptionBooking) {
+    // The 24h minimum-advance rule previously only lived in the separate, skippable
+    // /api/booking/validate-phase endpoint — nothing stopped a direct call to submit from
+    // bypassing it entirely and booking a ride minutes out. Enforced here, at the actual
+    // booking-creation entry point, not just the advisory pre-check.
+    if (!isAtLeastMinimumAdvanceNotice(trip.pickupDateTime)) {
+      throw new BookingApiError(400, {
+        error: 'Please book at least 24 hours in advance',
+        code: 'MINIMUM_ADVANCE_NOTICE',
+      });
+    }
+
     const tripClassification = classifyTrip(
       trip.pickup.address,
       trip.dropoff.address,
@@ -249,11 +306,10 @@ export async function submitBookingOrchestration(
       tipAmount: 0,
       tipPercent: 0,
       totalFare: fare,
-      // Scheduling must reserve the traffic-adjusted duration the quote actually priced and
-      // checked availability with, not the shorter free-flow estimate — otherwise a booking
-      // reserves too short a slot and a later request can overlap the traffic-adjusted portion
-      // of this ride.
-      estimatedMinutes: matchedQuote?.durationTrafficMinutes ?? matchedQuote?.estimatedMinutes,
+      // The quote's estimatedMinutes is already the traffic-adjusted duration it was priced and
+      // availability-checked with (see quote/route.ts) — carry it onto the booking so scheduling
+      // reserves that same slot length, not the flat default a missing value would fall back to.
+      estimatedMinutes: matchedQuote?.estimatedMinutes,
     },
     customer: {
       name: customer.name,
@@ -444,12 +500,28 @@ export async function submitBookingOrchestration(
 export async function createPaidBookingAndNotify(
   params: CreatePaidBookingParams
 ): Promise<CreatePaidBookingResult> {
-  const { bookingData, amountCents, tipCents, authUserId, smokeTest } = params;
+  const { bookingData, amountCents, tipCents, authUserId, smokeTest, skipMinimumNoticeCheck } = params;
   const pickupDateTimeValue = bookingData.pickupDateTime || bookingData.trip?.pickupDateTime;
   const parsedPickupDateTime = new Date(pickupDateTimeValue || Date.now());
   const normalizedPickupDateTimeIso = Number.isNaN(parsedPickupDateTime.getTime())
     ? new Date().toISOString()
     : parsedPickupDateTime.toISOString();
+
+  // This payment-first booking path never went through submitBookingOrchestration's checks —
+  // it had no 24h minimum-advance enforcement at all (the rule only lived in the separate,
+  // skippable /api/booking/validate-phase endpoint, which this flow doesn't call either).
+  // SMOKE_TEST_MODE gates side effects (real payments/notifications), not data validity — a
+  // smoke test should still submit a realistic, >24h-out pickup time like any real booking.
+  // Skipped when the caller already validated this before charging the card (see
+  // process-payment/route.ts) — re-running it here, after the charge, would check the SAME
+  // pickup time against a LATER moving `Date.now()` threshold for no reason. This is only a
+  // backstop for a hypothetical other caller that skipped its own pre-charge validation.
+  if (!skipMinimumNoticeCheck && !isAtLeastMinimumAdvanceNotice(parsedPickupDateTime)) {
+    throw new BookingApiError(400, {
+      error: 'Please book at least 24 hours in advance',
+      code: 'MINIMUM_ADVANCE_NOTICE',
+    });
+  }
 
   const bookingResult = await createBookingAtomic({
     ...bookingData,

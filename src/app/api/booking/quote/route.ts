@@ -85,10 +85,16 @@ export async function POST(request: Request) {
 
 
   try {
+    // Always geocode the address text server-side via Google's own resolution, rather than
+    // trusting client-supplied coordinates for the call that determines the fare. Distance
+    // Matrix accepts a plain address string directly, so this loses no accuracy for a real
+    // address — but a raw lat/lng pair has no relationship checked against the address text at
+    // all, so a client could keep the (displayed, driver-facing) address the same while
+    // substituting coordinates for a much shorter route, collapsing the fare for a real trip.
     const response = await mapsClient.distancematrix({
       params: {
-        origins: [pickupCoords ? `${pickupCoords.lat},${pickupCoords.lng}` : origin],
-        destinations: [dropoffCoords ? `${dropoffCoords.lat},${dropoffCoords.lng}` : destination],
+        origins: [origin],
+        destinations: [destination],
         key: process.env.GOOGLE_MAPS_SERVER_API_KEY!,
         departure_time: pickupDateTime,
         traffic_model: 'best_guess' as any
@@ -113,14 +119,16 @@ export async function POST(request: Request) {
   const durationTrafficSeconds = el.duration_in_traffic?.value ?? durationSeconds;
 
   const distanceMiles = metersToMiles(distanceMeters);
-  const durationMinutes = secondsToMinutes(durationSeconds);
   const durationTrafficMinutes = secondsToMinutes(durationTrafficSeconds);
 
-  let fare = Math.ceil(BASE_FARE + distanceMiles * PER_MILE_RATE + durationTrafficMinutes * PER_MINUTE_RATE);
+  // Compute the whole pipeline in raw (unrounded) form and round up exactly once at the end —
+  // ceiling at each of the three stages independently compounds to overcharge by up to ~$2-3
+  // versus a single combined-rate rounding, always in the business's favor.
+  let rawFare = BASE_FARE + distanceMiles * PER_MILE_RATE + durationTrafficMinutes * PER_MINUTE_RATE;
 
   // Apply personal ride discount
   if (fareType === 'personal' && personalDiscountPercent > 0) {
-    fare = Math.ceil(fare * (1 - personalDiscountPercent / 100));
+    rawFare = rawFare * (1 - personalDiscountPercent / 100);
   }
 
   // Check if pickup is airport for return trip multiplier
@@ -128,9 +136,14 @@ export async function POST(request: Request) {
   const isAirportDropoff = isAirportLocation(destination, dropoffCoords ?? null);
 
   if (isAirportPickup && !isAirportDropoff) {
-    const multiplier = Number.isFinite(airportReturnMultiplier) ? airportReturnMultiplier : 1.8;
-    fare = Math.ceil(fare * multiplier);
+    // Fallback matches DEFAULT_PRICING_CONFIG.airportReturnMultiplier (pricing-config.ts) — this
+    // branch is effectively unreachable today (zod validates the config upstream), but the
+    // fallback value should still agree with the documented default, not silently diverge from it.
+    const multiplier = Number.isFinite(airportReturnMultiplier) ? airportReturnMultiplier : 1.15;
+    rawFare = rawFare * multiplier;
   }
+
+  let fare = Math.ceil(rawFare);
 
   // Check availability for the requested time slot
   let availabilityWarning: string | null = null;
@@ -172,8 +185,12 @@ export async function POST(request: Request) {
       pickupCoords: pickupCoords || { lat: 0, lng: 0 }, // Fallback if no coords
       dropoffCoords: dropoffCoords || { lat: 0, lng: 0 }, // Fallback if no coords
       estimatedMiles: Math.round(distanceMiles * 100) / 100,
-      estimatedMinutes: Math.round(durationMinutes),
-      durationTrafficMinutes: Math.round(durationTrafficMinutes),
+      // Reflect the duration the fare is actually billed on (with traffic), not the free-flow
+      // duration — otherwise the displayed trip time never reconciles with the charged fare
+      // during rush hour (customer sees "20 min" but is billed for a 35-minute traffic duration).
+      // This is also the value scheduling uses to size the driver's slot for this ride (see
+      // booking-orchestrator.ts), so it must stay the traffic-adjusted number.
+      estimatedMinutes: Math.round(durationTrafficMinutes),
       price: fare,
       fareType,
       pickupDateTime, // Required - validated above
@@ -185,7 +202,7 @@ export async function POST(request: Request) {
       quoteId: quoteResult.quoteId,
       fare,
       distanceMiles: Math.round(distanceMiles * 100) / 100,
-      durationMinutes: Math.round(durationMinutes),
+      durationMinutes: Math.round(durationTrafficMinutes),
       fareType,
       expiresAt: expiresAt.toISOString(),
       expiresInMinutes: 15,
@@ -198,7 +215,7 @@ export async function POST(request: Request) {
     const responseBody = quoteResponseSchema.parse({
       fare,
       distanceMiles: Math.round(distanceMiles * 100) / 100,
-      durationMinutes: Math.round(durationMinutes),
+      durationMinutes: Math.round(durationTrafficMinutes),
       fareType,
       expiresAt: expiresAt.toISOString(),
       expiresInMinutes: 15,

@@ -81,6 +81,7 @@ vi.mock('@/lib/services/booking-orchestrator', () => ({
     bookingId: 'booking_456',
     emailWarning: null,
   }),
+  isAtLeastMinimumAdvanceNotice: vi.fn().mockReturnValue(true),
 }));
 
 vi.mock('@/lib/services/square-service', () => ({
@@ -96,6 +97,8 @@ vi.mock('@/lib/services/square-service', () => ({
 
 vi.mock('@/lib/services/booking-service', () => ({
   getBooking: vi.fn().mockResolvedValue(null),
+  claimPaymentForBookingCreation: vi.fn().mockResolvedValue(true),
+  getBookingIdBySquarePaymentId: vi.fn().mockResolvedValue(null),
 }));
 
 vi.mock('@/lib/security/rate-limit', () => ({
@@ -236,6 +239,9 @@ describe('Canonical endpoint contracts', () => {
           customer: {
             email: 'jane@example.com',
             phone: '2035551234',
+          },
+          trip: {
+            pickupDateTime: new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString(),
           },
         },
       }),

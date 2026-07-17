@@ -448,6 +448,55 @@ export default {
       }
     },
 
+    // Rule: No Next.js route segment config in a 'use client' file
+    'no-client-route-segment-config': {
+      meta: {
+        type: 'problem',
+        docs: {
+          description:
+            "Next.js silently ignores route-segment-config exports (dynamic, revalidate, fetchCache, runtime, dynamicParams) declared in a 'use client' module — they must live in a Server Component. A file with both looks like it forces dynamic rendering but does nothing, and the page gets statically cached instead. This caused a real production incident (stale ISR cache served admin pages, including their auth-gated content, to unauthenticated requests for days).",
+          category: 'Possible Errors',
+        },
+      },
+      create(context) {
+        const ROUTE_SEGMENT_CONFIG_NAMES = new Set([
+          'dynamic',
+          'revalidate',
+          'fetchCache',
+          'runtime',
+          'dynamicParams',
+          'preferredRegion',
+        ]);
+
+        let hasUseClientDirective = false;
+
+        return {
+          Program(node) {
+            const first = node.body[0];
+            hasUseClientDirective =
+              first &&
+              first.type === 'ExpressionStatement' &&
+              first.expression.type === 'Literal' &&
+              first.expression.value === 'use client';
+          },
+          ExportNamedDeclaration(node) {
+            if (!hasUseClientDirective) return;
+            const decl = node.declaration;
+            if (!decl || decl.type !== 'VariableDeclaration') return;
+
+            for (const declarator of decl.declarations) {
+              if (declarator.id.type === 'Identifier' && ROUTE_SEGMENT_CONFIG_NAMES.has(declarator.id.name)) {
+                context.report({
+                  node: declarator,
+                  message: `❌ export const ${declarator.id.name} has no effect in a 'use client' file — Next.js only reads route segment config from Server Components. Move this export (and the 'use client' content) into a thin Server Component page.tsx that renders a separate Client component.`,
+                });
+              }
+            }
+          },
+        };
+      },
+    },
+
     // Rule: Enforce CMS usage for text content
     'enforce-cms-usage': {
       meta: {

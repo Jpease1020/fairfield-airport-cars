@@ -1,16 +1,20 @@
 import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest';
-import { processPayment } from '@/lib/services/square-service';
-import { createBookingAtomic, getBooking } from '@/lib/services/booking-service';
+import { processPayment, refundPayment } from '@/lib/services/square-service';
+import { createBookingAtomic, getBooking, updateBooking, claimPaymentForBookingCreation, getBookingIdBySquarePaymentId } from '@/lib/services/booking-service';
 import { sendBookingVerificationEmail } from '@/lib/services/email-service';
 import { sendSms } from '@/lib/services/twilio-service';
 
 vi.mock('@/lib/services/square-service', () => ({
   processPayment: vi.fn(),
+  refundPayment: vi.fn(),
 }));
 
 vi.mock('@/lib/services/booking-service', () => ({
   createBookingAtomic: vi.fn(),
   getBooking: vi.fn(),
+  updateBooking: vi.fn(),
+  claimPaymentForBookingCreation: vi.fn(),
+  getBookingIdBySquarePaymentId: vi.fn(),
 }));
 
 vi.mock('@/lib/services/email-service', () => ({
@@ -40,14 +44,23 @@ vi.mock('@/lib/security/rate-limit', () => ({
   enforceRateLimit: vi.fn().mockResolvedValue(null),
 }));
 
+vi.mock('@/lib/utils/auth-server', () => ({
+  getAuthContext: vi.fn().mockResolvedValue(null),
+  requireOwnerOrAdmin: vi.fn().mockResolvedValue({ ok: true }),
+}));
+
 vi.mock('firebase/firestore', () => ({
   doc: vi.fn(() => ({})),
   updateDoc: vi.fn(() => Promise.resolve()),
 }));
 
 const mockProcessPayment = processPayment as unknown as ReturnType<typeof vi.fn>;
+const mockRefundPayment = refundPayment as unknown as ReturnType<typeof vi.fn>;
 const mockCreateBookingAtomic = createBookingAtomic as unknown as ReturnType<typeof vi.fn>;
 const mockGetBooking = getBooking as unknown as ReturnType<typeof vi.fn>;
+const mockUpdateBooking = updateBooking as unknown as ReturnType<typeof vi.fn>;
+const mockClaimPaymentForBookingCreation = claimPaymentForBookingCreation as unknown as ReturnType<typeof vi.fn>;
+const mockGetBookingIdBySquarePaymentId = getBookingIdBySquarePaymentId as unknown as ReturnType<typeof vi.fn>;
 const mockSendBookingVerificationEmail = sendBookingVerificationEmail as unknown as ReturnType<typeof vi.fn>;
 const mockSendSms = sendSms as unknown as ReturnType<typeof vi.fn>;
 
@@ -72,7 +85,7 @@ const baseRequestBody = {
     trip: {
       pickup: { address: '123 Main St, Fairfield, CT', coordinates: null },
       dropoff: { address: 'JFK Airport, Queens, NY', coordinates: null },
-      pickupDateTime: '2025-01-01T15:00:00.000Z',
+      pickupDateTime: '2028-01-01T15:00:00.000Z',
       fareType: 'personal',
       flightInfo: { airline: 'Delta', flightNumber: 'DL123' },
     },
@@ -100,6 +113,10 @@ describe('POST /api/payment/process-payment', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    // Default: this request is the first (and only) one claiming its paymentId, so the new
+    // booking-creation path proceeds normally. Individual tests override this to simulate a
+    // losing/duplicate claim.
+    mockClaimPaymentForBookingCreation.mockResolvedValue(true);
   });
 
   afterEach(() => {
@@ -164,15 +181,15 @@ describe('POST /api/payment/process-payment', () => {
           expect.objectContaining({
             source: 'payment',
             event: 'payment_booking_create',
-            normalizedPickupDateTimeIso: '2025-01-01T15:00:00.000Z',
-            businessPickupDateTime: '1/1/2025, 10:00 AM',
+            normalizedPickupDateTimeIso: '2028-01-01T15:00:00.000Z',
+            businessPickupDateTime: '1/1/2028, 10:00 AM',
           }),
         ]),
       })
     );
     expect(mockSendSms).toHaveBeenCalledWith({
       to: '+15555550123',
-      body: expect.stringContaining('1/1/2025, 10:00 AM'),
+      body: expect.stringContaining('1/1/2028, 10:00 AM'),
     });
   });
 
@@ -315,4 +332,254 @@ describe('POST /api/payment/process-payment', () => {
       expect.any(Error)
     );
   });
+
+  it('rejects a new booking pickup time less than 24h out BEFORE charging the card (regression: this check used to only run inside createPaidBookingAndNotify, after Square had already been charged, with no refund path)', async () => {
+    const soonPayload = {
+      ...baseRequestBody,
+      bookingData: {
+        ...baseRequestBody.bookingData,
+        trip: {
+          ...baseRequestBody.bookingData.trip,
+          pickupDateTime: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+        },
+      },
+    };
+
+    const response = await POST(buildRequest(soonPayload));
+    const payload = await response!.json();
+
+    expect(response!.status).toBe(400);
+    expect(payload.code).toBe('MINIMUM_ADVANCE_NOTICE');
+    expect(mockProcessPayment).not.toHaveBeenCalled();
+    expect(mockCreateBookingAtomic).not.toHaveBeenCalled();
+  });
+
+  it('rejects an invalid or missing pickup date/time BEFORE charging the card (regression: an invalid Date made the advance-notice guard silently no-op — Number.isNaN(parsedDate.getTime()) short-circuited the whole check to skipped rather than rejected — so the charge went through and only createPaidBookingAndNotify caught it afterward, once the card was already charged)', async () => {
+    const invalidDatePayload = {
+      ...baseRequestBody,
+      bookingData: {
+        ...baseRequestBody.bookingData,
+        trip: {
+          ...baseRequestBody.bookingData.trip,
+          pickupDateTime: 'not-a-real-date',
+        },
+      },
+    };
+
+    const response = await POST(buildRequest(invalidDatePayload));
+    const payload = await response!.json();
+
+    expect(response!.status).toBe(400);
+    expect(payload.code).toBe('INVALID_PICKUP_DATETIME');
+    expect(mockProcessPayment).not.toHaveBeenCalled();
+    expect(mockCreateBookingAtomic).not.toHaveBeenCalled();
+  });
+
+  it('auto-refunds the payment when booking creation fails after a successful charge (regression: customer used to be left charged with no booking and no refund)', async () => {
+    mockProcessPayment.mockResolvedValueOnce({
+      success: true,
+      orderId: 'order-conflict',
+      paymentId: 'pay-conflict',
+      status: 'COMPLETED',
+      amount: 15000,
+      currency: 'USD',
+    });
+    mockCreateBookingAtomic.mockRejectedValueOnce(new Error('Time slot conflicts with existing bookings'));
+    mockRefundPayment.mockResolvedValueOnce({ success: true, refundId: 'refund-1' });
+
+    const response = await POST(buildRequest(baseRequestBody));
+
+    expect(response!.status).toBe(500);
+    expect(mockRefundPayment).toHaveBeenCalledWith(
+      'pay-conflict',
+      15000,
+      'USD',
+      'Automatic refund: booking creation failed after payment'
+    );
+  });
+
+  it('logs a critical error (but still surfaces the original failure) when the auto-refund itself fails', async () => {
+    mockProcessPayment.mockResolvedValueOnce({
+      success: true,
+      orderId: 'order-conflict-2',
+      paymentId: 'pay-conflict-2',
+      status: 'COMPLETED',
+      amount: 15000,
+      currency: 'USD',
+    });
+    mockCreateBookingAtomic.mockRejectedValueOnce(new Error('Time slot conflicts with existing bookings'));
+    mockRefundPayment.mockRejectedValueOnce(new Error('Square refund API down'));
+
+    const response = await POST(buildRequest(baseRequestBody));
+
+    expect(response!.status).toBe(500);
+    expect(mockRefundPayment).toHaveBeenCalledTimes(1);
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      expect.stringContaining('CRITICAL'),
+      expect.any(Error)
+    );
+  });
+
+  it('syncs balanceDue/depositPaid/tipAmount on the existing booking when paying a remaining balance (regression: this path never wrote anything back to the booking)', async () => {
+    mockProcessPayment.mockResolvedValueOnce({
+      success: true,
+      orderId: 'order-balance',
+      paymentId: 'pay-balance',
+      status: 'COMPLETED',
+      amount: 5000,
+      currency: 'USD',
+    });
+    mockGetBooking.mockResolvedValueOnce({
+      id: 'booking-existing',
+      customer: { name: 'Jane Doe' },
+      balanceDue: 75,
+      tipAmount: 5,
+    });
+    mockUpdateBooking.mockResolvedValueOnce(undefined);
+
+    const response = await POST(buildRequest({
+      ...baseRequestBody,
+      amount: 5000,
+      tipAmount: 1000,
+      existingBookingId: 'booking-existing',
+      bookingData: undefined,
+    }));
+    const payload = await response!.json();
+
+    expect(response!.status).toBe(200);
+    expect(payload.bookingId).toBe('booking-existing');
+    expect(mockCreateBookingAtomic).not.toHaveBeenCalled();
+    expect(mockUpdateBooking).toHaveBeenCalledWith('booking-existing', {
+      depositPaid: true,
+      balanceDue: 25, // 75 - (5000 cents / 100)
+      tipAmount: 15, // 5 existing + (1000 cents / 100)
+      payment: {
+        depositAmount: null,
+        squareOrderId: undefined,
+        squarePaymentId: undefined,
+        tipPercent: 0,
+        totalAmount: 0,
+        depositPaid: true,
+        balanceDue: 25,
+        tipAmount: 15,
+      },
+    });
+  });
+
+  it('also syncs the nested payment.* fields, preserving unrelated payment fields (regression: Firestore .update() replaces a nested object wholesale rather than merging it, and booking-helpers.ts/bookings-utils.ts read booking.payment.* before the legacy top-level fields — writing only the legacy fields left the admin dashboard showing the stale pre-payment balance/deposit/tip state)', async () => {
+    mockProcessPayment.mockResolvedValueOnce({
+      success: true,
+      orderId: 'order-balance-2',
+      paymentId: 'pay-balance-2',
+      status: 'COMPLETED',
+      amount: 3000,
+      currency: 'USD',
+    });
+    mockGetBooking.mockResolvedValueOnce({
+      id: 'booking-existing-2',
+      customer: { name: 'Jane Doe' },
+      payment: {
+        depositAmount: 150,
+        depositPaid: true,
+        balanceDue: 50,
+        tipAmount: 0,
+        tipPercent: 0,
+        totalAmount: 200,
+      },
+    });
+    mockUpdateBooking.mockResolvedValueOnce(undefined);
+
+    const response = await POST(buildRequest({
+      ...baseRequestBody,
+      amount: 3000,
+      tipAmount: 0,
+      existingBookingId: 'booking-existing-2',
+      bookingData: undefined,
+    }));
+
+    expect(response!.status).toBe(200);
+    expect(mockUpdateBooking).toHaveBeenCalledWith('booking-existing-2', {
+      depositPaid: true,
+      balanceDue: 20, // 50 - (3000 cents / 100)
+      tipAmount: 0,
+      payment: {
+        depositAmount: 150, // preserved, not touched by this sync
+        totalAmount: 200, // preserved, not touched by this sync
+        depositPaid: true,
+        balanceDue: 20,
+        tipAmount: 0,
+        tipPercent: 0,
+      },
+    });
+  });
+
+  it('returns the winning booking instead of creating a duplicate when this request loses the payment claim race (regression: Square\'s idempotency key dedupes the CHARGE for an identical retry, but nothing stopped this route from creating a second BOOKING for that one payment — e.g. a double-clicked submit firing two requests with the same token before either resolved)', async () => {
+    mockProcessPayment.mockResolvedValueOnce({
+      success: true,
+      orderId: 'order-race',
+      paymentId: 'pay-race',
+      status: 'COMPLETED',
+      amount: 15000,
+      currency: 'USD',
+    });
+    mockClaimPaymentForBookingCreation.mockResolvedValueOnce(false);
+    mockGetBookingIdBySquarePaymentId.mockResolvedValueOnce('booking-winner');
+
+    const response = await POST(buildRequest(baseRequestBody));
+    const payload = await response!.json();
+
+    expect(response!.status).toBe(200);
+    expect(payload.bookingId).toBe('booking-winner');
+    expect(payload.paymentId).toBe('pay-race');
+    expect(mockCreateBookingAtomic).not.toHaveBeenCalled();
+  });
+
+  it('falls through and creates a booking anyway if the payment claim is lost but no winning booking can be found within the poll window (rather than silently dropping a paid customer\'s booking)', async () => {
+    mockProcessPayment.mockResolvedValueOnce({
+      success: true,
+      orderId: 'order-race-2',
+      paymentId: 'pay-race-2',
+      status: 'COMPLETED',
+      amount: 15000,
+      currency: 'USD',
+    });
+    mockClaimPaymentForBookingCreation.mockResolvedValueOnce(false);
+    mockGetBookingIdBySquarePaymentId.mockResolvedValue(null);
+    mockCreateBookingAtomic.mockResolvedValueOnce({ bookingId: 'booking-fallback' });
+    mockGetBooking.mockResolvedValueOnce({
+      id: 'booking-fallback',
+      trip: {
+        pickup: baseRequestBody.bookingData.trip.pickup,
+        dropoff: baseRequestBody.bookingData.trip.dropoff,
+        pickupDateTime: baseRequestBody.bookingData.trip.pickupDateTime,
+        fareType: baseRequestBody.bookingData.trip.fareType,
+        flightInfo: baseRequestBody.bookingData.trip.flightInfo,
+      },
+      customer: {
+        name: baseRequestBody.bookingData.customer.name,
+        email: baseRequestBody.bookingData.customer.email,
+        phone: baseRequestBody.bookingData.customer.phone,
+        notes: baseRequestBody.bookingData.customer.notes,
+        saveInfoForFuture: baseRequestBody.bookingData.customer.saveInfoForFuture,
+      },
+      payment: {
+        tipAmount: 0,
+        tipPercent: 0,
+        balanceDue: 0,
+        depositAmount: 150,
+        depositPaid: true,
+        totalAmount: baseRequestBody.bookingData.payment.totalAmount,
+      },
+      status: 'pending',
+    });
+    mockSendBookingVerificationEmail.mockResolvedValueOnce(undefined);
+    mockSendSms.mockResolvedValueOnce(undefined);
+
+    const response = await POST(buildRequest(baseRequestBody));
+    const payload = await response!.json();
+
+    expect(response!.status).toBe(200);
+    expect(payload.bookingId).toBe('booking-fallback');
+    expect(mockCreateBookingAtomic).toHaveBeenCalledTimes(1);
+  }, 10_000);
 });

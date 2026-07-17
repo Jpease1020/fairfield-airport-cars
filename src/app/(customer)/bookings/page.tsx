@@ -6,6 +6,8 @@ import {
 } from '@/design/ui';
 import CustomerBookingsClient from './CustomerBookingsClient';
 
+export const dynamic = 'force-dynamic';
+
 // Main page component (Server Component)
 export default function CustomerBookingsPage() {
   return (
