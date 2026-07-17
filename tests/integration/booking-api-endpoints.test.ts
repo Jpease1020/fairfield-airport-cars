@@ -451,6 +451,52 @@ describe('Booking API Endpoints - Deterministic Integration', () => {
       expect(body.changedFields).toContain('flight info');
     });
 
+    it('normalizes hasFlight to false when true but every flight detail field is blank, so it matches the existing (also blank) state and is not reported as a change (regression: hasFlight:true with all-blank fields used to be stored as-is and trigger a "flight info changed" admin SMS for what was really a no-op)', async () => {
+      requireOwnerAdminOrTrackingToken.mockResolvedValue({ ok: true, auth: null, access: 'tracking-token' });
+      mockBookingDb();
+
+      const { PUT } = await import('@/app/api/booking/[bookingId]/route');
+      const response = ensureResponse(
+        await PUT(
+          makeNextRequest('http://localhost/api/booking/booking-1?token=track-abc', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              flightInfo: { hasFlight: true, airline: '', flightNumber: '', arrivalTime: '', terminal: '' },
+            }),
+          }) as any,
+          { params: Promise.resolve({ bookingId: 'booking-1' }) }
+        )
+      );
+
+      expect(response.status).toBe(200);
+      const body = await response.json();
+      expect(body.changedFields).toEqual([]);
+    });
+
+    it('normalizes hasFlight to false when true but every flight detail field is blank, even when other detail fields (e.g. a leftover terminal) are non-blank on their own — airline/flightNumber/arrivalTime are what matter for pickup planning', async () => {
+      requireOwnerAdminOrTrackingToken.mockResolvedValue({ ok: true, auth: null, access: 'tracking-token' });
+      const { docUpdate } = mockBookingDb();
+
+      const { PUT } = await import('@/app/api/booking/[bookingId]/route');
+      const response = ensureResponse(
+        await PUT(
+          makeNextRequest('http://localhost/api/booking/booking-1?token=track-abc', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              flightInfo: { hasFlight: true, airline: '', flightNumber: '', arrivalTime: '', terminal: '4' },
+            }),
+          }) as any,
+          { params: Promise.resolve({ bookingId: 'booking-1' }) }
+        )
+      );
+
+      expect(response.status).toBe(200);
+      const updatePayload = docUpdate.mock.calls[0][0] as any;
+      expect(updatePayload.trip.flightInfo.hasFlight).toBe(false);
+    });
+
     it('rejects tracking-token access trying to change fields other than flightInfo', async () => {
       requireOwnerAdminOrTrackingToken.mockResolvedValue({ ok: true, auth: null, access: 'tracking-token' });
       const { docUpdate } = mockBookingDb();
