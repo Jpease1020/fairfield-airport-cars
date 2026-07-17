@@ -34,6 +34,9 @@ const SAVED_PRICING = {
   version: 1,
 };
 
+// 4 pickups x 6 airports (outbound) + 6 airports x 1 home base (return) = 30.
+const TOTAL_BATCH_ROUTES = 30;
+
 function makeTestQuoteResult(overrides: Partial<any> = {}) {
   return {
     fare: 66,
@@ -58,6 +61,12 @@ function makeTestQuoteResult(overrides: Partial<any> = {}) {
   };
 }
 
+function getTestQuoteCalls() {
+  return mockAuthFetch.mock.calls.filter(
+    (call) => typeof call[0] === 'string' && call[0].includes('/api/admin/pricing/test-quote')
+  );
+}
+
 describe('AdminPricingPageClient — batch route tester', () => {
   beforeEach(() => {
     mockAuthFetch.mockReset();
@@ -69,7 +78,7 @@ describe('AdminPricingPageClient — batch route tester', () => {
     });
   });
 
-  it('runs all 24 common routes (4 pickups x 6 airports) and renders a result row for each', async () => {
+  it('runs every outbound (pickup x airport) route plus a return leg per airport, rendering a result row for each', async () => {
     render(<AdminPricingPageClient />);
 
     await waitFor(() => expect(screen.getByText('Run all routes')).toBeInTheDocument());
@@ -77,13 +86,11 @@ describe('AdminPricingPageClient — batch route tester', () => {
     fireEvent.click(screen.getByText('Run all routes'));
 
     await waitFor(() => {
-      const testQuoteCalls = mockAuthFetch.mock.calls.filter(
-        (call) => typeof call[0] === 'string' && call[0].includes('/api/admin/pricing/test-quote')
-      );
-      expect(testQuoteCalls).toHaveLength(24);
+      expect(getTestQuoteCalls()).toHaveLength(TOTAL_BATCH_ROUTES);
     });
 
-    // Every pickup/airport pair should appear in the rendered table.
+    // Every pickup/airport label should appear (as origin for outbound rows, or as origin for the
+    // return row in the airport's case / destination for the home base in the return row's case).
     await waitFor(() => {
       expect(screen.getAllByText('Fairfield, CT').length).toBeGreaterThan(0);
       expect(screen.getAllByText('JFK').length).toBeGreaterThan(0);
@@ -91,10 +98,24 @@ describe('AdminPricingPageClient — batch route tester', () => {
       expect(screen.getAllByText('Trumbull, CT').length).toBeGreaterThan(0);
     });
 
-    // Fares from the (mocked) results should render.
+    // Fares from the (mocked) results should render for every route.
     await waitFor(() => {
-      expect(screen.getAllByText('$66').length).toBe(24);
+      expect(screen.getAllByText('$66').length).toBe(TOTAL_BATCH_ROUTES);
     });
+  });
+
+  it('sends a route with the airport as the origin for the return legs, so the return-multiplier path is actually exercised', async () => {
+    render(<AdminPricingPageClient />);
+    await waitFor(() => expect(screen.getByText('Run all routes')).toBeInTheDocument());
+    fireEvent.click(screen.getByText('Run all routes'));
+
+    await waitFor(() => expect(getTestQuoteCalls()).toHaveLength(TOTAL_BATCH_ROUTES));
+
+    const bodies = getTestQuoteCalls().map((call) => JSON.parse(call[1].body));
+    const returnLegs = bodies.filter((b) => b.origin === 'John F. Kennedy International Airport, Queens, NY');
+    // Exactly one JFK->home return leg; JFK never appears as a destination-side origin otherwise.
+    expect(returnLegs).toHaveLength(1);
+    expect(returnLegs[0].destination).toBe('Fairfield, CT');
   });
 
   it('sends the currently-edited (possibly unsaved) rates as pricingOverrides for every route, not the last-saved config', async () => {
@@ -108,15 +129,10 @@ describe('AdminPricingPageClient — batch route tester', () => {
     fireEvent.click(screen.getByText('Run all routes'));
 
     await waitFor(() => {
-      const testQuoteCalls = mockAuthFetch.mock.calls.filter(
-        (call) => typeof call[0] === 'string' && call[0].includes('/api/admin/pricing/test-quote')
-      );
-      expect(testQuoteCalls.length).toBe(24);
+      expect(getTestQuoteCalls().length).toBe(TOTAL_BATCH_ROUTES);
     });
 
-    const firstCallBody = JSON.parse(mockAuthFetch.mock.calls.find(
-      (call) => typeof call[0] === 'string' && call[0].includes('/api/admin/pricing/test-quote')
-    )![1].body);
+    const firstCallBody = JSON.parse(getTestQuoteCalls()[0][1].body);
     expect(firstCallBody.pricingOverrides.baseFare).toBe(25);
   });
 
@@ -140,9 +156,43 @@ describe('AdminPricingPageClient — batch route tester', () => {
     await waitFor(() => {
       expect(screen.getByText('Unable to calculate route')).toBeInTheDocument();
     });
-    // The other 23 routes still complete successfully.
+    // The other routes still complete successfully.
     await waitFor(() => {
-      expect(screen.getAllByText('$66').length).toBe(23);
+      expect(screen.getAllByText('$66').length).toBe(TOTAL_BATCH_ROUTES - 1);
     });
+  });
+
+  it('ignores a second click while a run is already in progress (regression: no re-entrancy guard let a double-click fire two overlapping runs, doubling in-flight requests and defeating the concurrency cap)', async () => {
+    let resolveFirst: (() => void) | null = null;
+    mockAuthFetch.mockImplementation((input: string) => {
+      if (typeof input === 'string' && input.includes('/api/admin/pricing/test-quote')) {
+        return new Promise((resolve) => {
+          if (!resolveFirst) resolveFirst = () => resolve(jsonResponse(makeTestQuoteResult()) as any);
+        });
+      }
+      return jsonResponse(SAVED_PRICING);
+    });
+
+    render(<AdminPricingPageClient />);
+    await waitFor(() => expect(screen.getByText('Run all routes')).toBeInTheDocument());
+
+    const button = screen.getByText('Run all routes');
+    fireEvent.click(button);
+    fireEvent.click(button); // second click while the first run's requests are still pending
+    fireEvent.click(button); // and a third, for good measure
+
+    await waitFor(() => {
+      // Concurrency cap is 6 — a re-entrant second/third run would push this well past 6.
+      expect(getTestQuoteCalls().length).toBe(6);
+    });
+  });
+
+  it('re-enables the Run all routes button after all requests settle', async () => {
+    render(<AdminPricingPageClient />);
+    await waitFor(() => expect(screen.getByText('Run all routes')).toBeInTheDocument());
+    fireEvent.click(screen.getByText('Run all routes'));
+
+    await waitFor(() => expect(getTestQuoteCalls()).toHaveLength(TOTAL_BATCH_ROUTES));
+    await waitFor(() => expect(screen.getByText('Run all routes')).not.toBeDisabled());
   });
 });

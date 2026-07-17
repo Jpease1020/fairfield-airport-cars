@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Container, Stack, Text, Box, Button, Input, Label, LoadingSpinner, Alert, H1, H2 } from '@/design/ui';
 import { LocationInput } from '@/design/components/base-components/forms/LocationInput';
 import { authFetch } from '@/lib/utils/auth-fetch';
@@ -48,13 +48,7 @@ const DEFAULT_FORM: PricingForm = {
   minimumFare: 100,
 };
 
-interface CommonPickup {
-  label: string;
-  address: string;
-  coords: { lat: number; lng: number };
-}
-
-interface CommonAirport {
+interface CommonLocation {
   label: string;
   address: string;
   coords: { lat: number; lng: number };
@@ -63,41 +57,86 @@ interface CommonAirport {
 // The pickup points Gregg's customers actually book most often. Label and address intentionally
 // match (both plain town names) — Google resolves these to the town centroid, so a label implying
 // a specific landmark (e.g. "train station") would overstate precision the query doesn't have.
-const COMMON_PICKUPS: CommonPickup[] = [
+const COMMON_PICKUPS: CommonLocation[] = [
   { label: 'Fairfield, CT', address: 'Fairfield, CT', coords: { lat: 41.1408, lng: -73.2633 } },
   { label: 'Westport, CT', address: 'Westport, CT', coords: { lat: 41.1415, lng: -73.3579 } },
   { label: 'Stamford, CT', address: 'Stamford, CT', coords: { lat: 41.0534, lng: -73.5387 } },
   { label: 'Trumbull, CT', address: 'Trumbull, CT', coords: { lat: 41.2429, lng: -73.2007 } },
 ];
 
-// A curated, geocodable full address per airport (KNOWN_AIRPORTS' bare `name` is enough for some
-// of these, but a city/state suffix makes the Distance Matrix lookup more reliable) — coordinates
-// are derived from KNOWN_AIRPORTS itself (single source of truth) rather than re-typed here, so
-// this can't silently drift if an airport's reference coordinates are ever tuned in constants.ts.
-const COMMON_AIRPORT_ADDRESSES: Record<string, string> = {
-  JFK: 'John F. Kennedy International Airport, Queens, NY',
-  LGA: 'LaGuardia Airport, Queens, NY 11371',
-  EWR: 'Newark Liberty International Airport, Newark, NJ',
-  BDL: 'Bradley International Airport, Windsor Locks, CT',
-  HVN: 'Tweed New Haven Airport, New Haven, CT',
-  HPN: 'Westchester County Airport, White Plains, NY',
+// City/state suffix per airport for a reliably-geocodable full address — the airport NAME itself
+// is derived from KNOWN_AIRPORTS.name (not re-typed) so it can't drift from the airport-detection
+// logic's own reference data; only this small suffix map is curated locally.
+const COMMON_AIRPORT_ADDRESS_SUFFIXES: Record<string, string> = {
+  JFK: 'Queens, NY',
+  LGA: 'Queens, NY 11371',
+  EWR: 'Newark, NJ',
+  BDL: 'Windsor Locks, CT',
+  HVN: 'New Haven, CT',
+  HPN: 'White Plains, NY',
 };
 
-const COMMON_AIRPORTS: CommonAirport[] = KNOWN_AIRPORTS.filter((a) => a.code in COMMON_AIRPORT_ADDRESSES).map(
-  (a) => ({ label: a.code, address: COMMON_AIRPORT_ADDRESSES[a.code], coords: a.coordinates })
+const COMMON_AIRPORTS: CommonLocation[] = KNOWN_AIRPORTS.filter((a) => a.code in COMMON_AIRPORT_ADDRESS_SUFFIXES).map(
+  (a) => ({ label: a.code, address: `${a.name}, ${COMMON_AIRPORT_ADDRESS_SUFFIXES[a.code]}`, coords: a.coordinates })
 );
 
-interface BatchRouteResult {
-  pickupLabel: string;
-  airportLabel: string;
+interface BatchRoutePlan {
+  originLabel: string;
+  originAddress: string;
+  originCoords: { lat: number; lng: number };
+  destinationLabel: string;
+  destinationAddress: string;
+  destinationCoords: { lat: number; lng: number };
+}
+
+// Every outbound (town -> airport) combination, plus one return (airport -> home) leg per airport.
+// The return legs matter: the airport-return-multiplier only applies when the AIRPORT is the
+// pickup (see test-quote/route.ts's isAirportPickup && !isAirportDropoff check) — without them,
+// this tool could never actually show what changing that multiplier does to a real fare.
+function buildBatchRoutePlans(): BatchRoutePlan[] {
+  const plans: BatchRoutePlan[] = [];
+  for (const pickup of COMMON_PICKUPS) {
+    for (const airport of COMMON_AIRPORTS) {
+      plans.push({
+        originLabel: pickup.label,
+        originAddress: pickup.address,
+        originCoords: pickup.coords,
+        destinationLabel: airport.label,
+        destinationAddress: airport.address,
+        destinationCoords: airport.coords,
+      });
+    }
+  }
+  const homeBase = COMMON_PICKUPS[0];
+  for (const airport of COMMON_AIRPORTS) {
+    plans.push({
+      originLabel: airport.label,
+      originAddress: airport.address,
+      originCoords: airport.coords,
+      destinationLabel: homeBase.label,
+      destinationAddress: homeBase.address,
+      destinationCoords: homeBase.coords,
+    });
+  }
+  return plans;
+}
+
+const BATCH_ROUTE_PLANS: BatchRoutePlan[] = buildBatchRoutePlans();
+
+interface BatchRouteResult extends BatchRoutePlan {
   fareType: 'personal' | 'business';
   status: 'pending' | 'done' | 'error';
   result?: TestQuoteResult;
   error?: string;
 }
 
+function patchBatchRow(rows: BatchRouteResult[], index: number, patch: Partial<BatchRouteResult>): BatchRouteResult[] {
+  return rows.map((r, i) => (i === index ? { ...r, ...patch } : r));
+}
+
 // How many test-quote requests (each a real Google Distance Matrix call) run at once — a full
-// batch is 24 routes; capping concurrency avoids bursting the Maps API all at once.
+// batch is BATCH_ROUTE_PLANS.length routes; capping concurrency avoids bursting the Maps API all
+// at once.
 const BATCH_CONCURRENCY = 6;
 
 export default function AdminPricingPageClient() {
@@ -121,6 +160,8 @@ export default function AdminPricingPageClient() {
   const [batchFareType, setBatchFareType] = useState<'personal' | 'business'>('personal');
   const [batchRows, setBatchRows] = useState<BatchRouteResult[] | null>(null);
   const [batchRunning, setBatchRunning] = useState(false);
+  const isMountedRef = useRef(true);
+  useEffect(() => () => { isMountedRef.current = false; }, []);
 
   useEffect(() => {
     authFetch('/api/admin/pricing')
@@ -203,13 +244,11 @@ export default function AdminPricingPageClient() {
   };
 
   const runBatchTest = async () => {
+    if (batchRunning) return; // guards against a double-click firing two overlapping runs
     setBatchRunning(true);
-    const rows: BatchRouteResult[] = [];
-    for (const pickup of COMMON_PICKUPS) {
-      for (const airport of COMMON_AIRPORTS) {
-        rows.push({ pickupLabel: pickup.label, airportLabel: airport.label, fareType: batchFareType, status: 'pending' });
-      }
-    }
+
+    const activeFareType = batchFareType;
+    const rows: BatchRouteResult[] = BATCH_ROUTE_PLANS.map((plan) => ({ ...plan, fareType: activeFareType, status: 'pending' }));
     setBatchRows(rows);
 
     const pricingOverrides = {
@@ -221,23 +260,27 @@ export default function AdminPricingPageClient() {
       minimumFare: form.minimumFare,
     };
 
+    const applyPatch = (index: number, patch: Partial<BatchRouteResult>) => {
+      if (!isMountedRef.current) return;
+      setBatchRows((prev) => (prev ? patchBatchRow(prev, index, patch) : prev));
+    };
+
     let nextIndex = 0;
     const runNext = async (): Promise<void> => {
       const index = nextIndex++;
       if (index >= rows.length) return;
-      const pickup = COMMON_PICKUPS[Math.floor(index / COMMON_AIRPORTS.length)];
-      const airport = COMMON_AIRPORTS[index % COMMON_AIRPORTS.length];
+      const row = rows[index];
 
       try {
         const res = await authFetch('/api/admin/pricing/test-quote', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            origin: pickup.address,
-            destination: airport.address,
-            pickupCoords: pickup.coords,
-            dropoffCoords: airport.coords,
-            fareType: batchFareType,
+            origin: row.originAddress,
+            destination: row.destinationAddress,
+            pickupCoords: row.originCoords,
+            dropoffCoords: row.destinationCoords,
+            fareType: activeFareType,
             pricingOverrides,
           }),
         });
@@ -246,20 +289,19 @@ export default function AdminPricingPageClient() {
           throw new Error(e.error || `Request failed (${res.status})`);
         }
         const data: TestQuoteResult = await res.json();
-        setBatchRows((prev) =>
-          prev ? prev.map((r, i) => (i === index ? { ...r, status: 'done', result: data } : r)) : prev
-        );
+        applyPatch(index, { status: 'done', result: data });
       } catch (e: any) {
-        setBatchRows((prev) =>
-          prev ? prev.map((r, i) => (i === index ? { ...r, status: 'error', error: e.message ?? 'Failed' } : r)) : prev
-        );
+        applyPatch(index, { status: 'error', error: e.message ?? 'Failed' });
       }
 
       await runNext();
     };
 
-    await Promise.all(Array.from({ length: Math.min(BATCH_CONCURRENCY, rows.length) }, () => runNext()));
-    setBatchRunning(false);
+    try {
+      await Promise.all(Array.from({ length: Math.min(BATCH_CONCURRENCY, rows.length) }, () => runNext()));
+    } finally {
+      if (isMountedRef.current) setBatchRunning(false);
+    }
   };
 
   const updateField = (field: keyof PricingForm, value: number) => {
@@ -503,25 +545,27 @@ export default function AdminPricingPageClient() {
             <div>
               <H2>Test common routes</H2>
               <Text size="sm" color="secondary">
-                Runs {COMMON_PICKUPS.length * COMMON_AIRPORTS.length} real routes ({COMMON_PICKUPS.map((p) => p.label).join(', ')} × {COMMON_AIRPORTS.map((a) => a.label).join(', ')}) against the rates above (even if unsaved) — change a rate, run it again, and see every route's fare shift before saving.
+                Runs {BATCH_ROUTE_PLANS.length} real routes — {COMMON_PICKUPS.map((p) => p.label).join(', ')} to each of {COMMON_AIRPORTS.map((a) => a.label).join(', ')}, plus a return leg from each airport back to {COMMON_PICKUPS[0].label} — against the rates above (even if unsaved). Change a rate, run it again, and see every route's fare shift before saving.
               </Text>
             </div>
             <Stack spacing="md" direction="horizontal" style={{ alignItems: 'center' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: batchRunning ? 'not-allowed' : 'pointer' }}>
                 <input
                   type="radio"
                   name="batchFareType"
                   checked={batchFareType === 'personal'}
                   onChange={() => setBatchFareType('personal')}
+                  disabled={batchRunning}
                 />
                 <Text as="span">Personal</Text>
               </label>
-              <label style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: batchRunning ? 'not-allowed' : 'pointer' }}>
                 <input
                   type="radio"
                   name="batchFareType"
                   checked={batchFareType === 'business'}
                   onChange={() => setBatchFareType('business')}
+                  disabled={batchRunning}
                 />
                 <Text as="span">Business</Text>
               </label>
@@ -544,8 +588,8 @@ export default function AdminPricingPageClient() {
                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
                   <thead>
                     <tr style={{ textAlign: 'left', borderBottom: '2px solid #e5e5e5' }}>
-                      <th style={{ padding: '6px 8px' }}>Pickup</th>
-                      <th style={{ padding: '6px 8px' }}>Airport</th>
+                      <th style={{ padding: '6px 8px' }}>Origin</th>
+                      <th style={{ padding: '6px 8px' }}>Destination</th>
                       <th style={{ padding: '6px 8px', textAlign: 'right' }}>Miles</th>
                       <th style={{ padding: '6px 8px', textAlign: 'right' }}>Min</th>
                       <th style={{ padding: '6px 8px', textAlign: 'right' }}>Fare</th>
@@ -555,8 +599,8 @@ export default function AdminPricingPageClient() {
                   <tbody>
                     {batchRows.map((row, i) => (
                       <tr key={i} style={{ borderBottom: '1px solid #f0f0f0' }}>
-                        <td style={{ padding: '6px 8px' }}>{row.pickupLabel}</td>
-                        <td style={{ padding: '6px 8px' }}>{row.airportLabel}</td>
+                        <td style={{ padding: '6px 8px' }}>{row.originLabel}</td>
+                        <td style={{ padding: '6px 8px' }}>{row.destinationLabel}</td>
                         {row.status === 'pending' && (
                           <td colSpan={4} style={{ padding: '6px 8px', color: '#999' }}>Calculating…</td>
                         )}
