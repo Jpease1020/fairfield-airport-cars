@@ -53,10 +53,13 @@ export async function GET(request: NextRequest) {
       openUrl: buildCalendarOpenUrl(),
       timeZone: BUSINESS_TIME_ZONE,
     });
-    // This config only changes on redeploy (it's built from env vars), so let the browser
-    // reuse it for a few minutes instead of re-running requireAdmin's Firebase/Firestore
-    // lookup on every visit to /admin/schedules. `private` keeps it out of shared/CDN caches.
-    response.headers.set('Cache-Control', 'private, max-age=300');
+    // `private, max-age` is keyed by URL only — browsers don't partition their HTTP cache by
+    // the Authorization header requireAdmin actually checks, so a cached response could be
+    // replayed to a different identity on the same browser after a logout/account switch
+    // within the cache window, without requireAdmin ever re-running. This endpoint is only hit
+    // once per /admin/schedules visit, so the Firestore-lookup cost this was trying to avoid
+    // isn't worth that gap — no-store instead.
+    response.headers.set('Cache-Control', 'no-store');
     return response;
   } catch (err) {
     console.error('GET admin/calendar-embed failed:', err);
