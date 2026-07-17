@@ -13,8 +13,11 @@ export const pricingConfigSchema = z.object({
   personalDiscountPercent: z.number().min(0).max(100),
   // The absolute minimum a customer is ever charged, applied after every other stage (base +
   // mileage + time, personal discount, airport multiplier) — a short or nearby ride must never
-  // price out below this floor regardless of what the formula above it computes.
-  minimumFare: z.number().min(0).max(500).default(0),
+  // price out below this floor regardless of what the formula above it computes. Defaults to
+  // DEFAULT_PRICING_CONFIG's value below (not 0) so an existing config/pricing doc that predates
+  // this field gets the floor applied too, not silently no floor until an admin happens to
+  // re-save the pricing page.
+  minimumFare: z.number().min(0).max(500).default(100),
   updatedAt: z.union([z.date(), z.string()]).optional(),
   updatedBy: z.string().optional(),
   version: z.number().int().min(1).optional(),
