@@ -161,7 +161,15 @@ export default function AdminPricingPageClient() {
   const [batchRows, setBatchRows] = useState<BatchRouteResult[] | null>(null);
   const [batchRunning, setBatchRunning] = useState(false);
   const isMountedRef = useRef(true);
-  useEffect(() => () => { isMountedRef.current = false; }, []);
+  useEffect(() => {
+    // StrictMode (on by default in this app's dev builds) mounts every component twice: the
+    // first mount's cleanup runs immediately, then the effect setup runs again for the "real"
+    // mount. Without resetting the ref back to true here, that first cleanup would permanently
+    // leave isMountedRef false — every applyPatch and the final setBatchRunning(false) would
+    // silently no-op forever, well before the component actually unmounts.
+    isMountedRef.current = true;
+    return () => { isMountedRef.current = false; };
+  }, []);
 
   useEffect(() => {
     authFetch('/api/admin/pricing')

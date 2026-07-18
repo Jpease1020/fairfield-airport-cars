@@ -1,3 +1,4 @@
+import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import AdminPricingPageClient from '@/app/(admin)/admin/pricing/AdminPricingPageClient';
@@ -185,6 +186,20 @@ describe('AdminPricingPageClient — batch route tester', () => {
       // Concurrency cap is 6 — a re-entrant second/third run would push this well past 6.
       expect(getTestQuoteCalls().length).toBe(6);
     });
+  });
+
+  it('still completes a batch run under React.StrictMode (regression: StrictMode double-invokes effects in dev — mount, cleanup, remount — and the mounted-ref guard was not reset on the second setup, so it stayed permanently false and every row/patch silently no-op\'d after the first render cycle)', async () => {
+    render(
+      <React.StrictMode>
+        <AdminPricingPageClient />
+      </React.StrictMode>
+    );
+    await waitFor(() => expect(screen.getByText('Run all routes')).toBeInTheDocument());
+    fireEvent.click(screen.getByText('Run all routes'));
+
+    await waitFor(() => expect(getTestQuoteCalls()).toHaveLength(TOTAL_BATCH_ROUTES));
+    await waitFor(() => expect(screen.getAllByText('$66').length).toBe(TOTAL_BATCH_ROUTES));
+    await waitFor(() => expect(screen.getByText('Run all routes')).not.toBeDisabled());
   });
 
   it('re-enables the Run all routes button after all requests settle', async () => {
