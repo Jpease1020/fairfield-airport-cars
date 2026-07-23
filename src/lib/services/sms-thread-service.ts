@@ -118,20 +118,24 @@ export async function updateThreadOnInbound(threadId: string, messageBody: strin
       : 0;
   const shouldNotifyAdmin = Date.now() - lastNotifiedMs > ADMIN_NOTIFY_COOLDOWN_MS;
 
-  const update: Record<string, unknown> = {
+  await threadRef.update({
     lastMessageAt: FieldValue.serverTimestamp(),
     lastMessagePreview: toPreview(messageBody),
     lastInboundAt: FieldValue.serverTimestamp(),
     unreadCount: FieldValue.increment(1),
     updatedAt: FieldValue.serverTimestamp(),
-  };
-  if (shouldNotifyAdmin) {
-    update.lastAdminNotifiedAt = FieldValue.serverTimestamp();
-  }
-
-  await threadRef.update(update);
+  });
 
   return shouldNotifyAdmin;
+}
+
+// Call only after the forward SMS to Gregg's phone has actually been sent —
+// recording this on a failed send would suppress the next message's retry for no reason.
+export async function recordAdminNotified(threadId: string): Promise<void> {
+  const db = getAdminDb();
+  await db.collection(THREADS_COLLECTION).doc(threadId).update({
+    lastAdminNotifiedAt: FieldValue.serverTimestamp(),
+  });
 }
 
 export async function updateThreadOnOutbound(threadId: string, messageBody: string): Promise<void> {

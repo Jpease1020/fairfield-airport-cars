@@ -121,7 +121,7 @@ describe('sms-thread-service', () => {
     );
   });
 
-  it('updates inbound thread metadata, increments unread count, and notifies admin when never notified before', async () => {
+  it('updates inbound thread metadata, increments unread count, and reports notify-worthy when never notified before', async () => {
     threadDocGet.mockResolvedValue({
       exists: true,
       data: () => ({ unreadCount: 0 }),
@@ -134,8 +134,12 @@ describe('sms-thread-service', () => {
       expect.objectContaining({
         lastMessagePreview: 'Can you pick me up at JFK tomorrow?',
         unreadCount: { __type: 'increment', amount: 1 },
-        lastAdminNotifiedAt: { __type: 'serverTimestamp' },
       })
+    );
+    // lastAdminNotifiedAt is recorded separately via recordAdminNotified, only after a
+    // successful forward — never written here, so a failed send can't suppress a retry.
+    expect(threadDocUpdate).toHaveBeenCalledWith(
+      expect.not.objectContaining({ lastAdminNotifiedAt: expect.anything() })
     );
     expect(shouldNotifyAdmin).toBe(true);
   });
@@ -183,6 +187,15 @@ describe('sms-thread-service', () => {
     const shouldNotifyAdmin = await updateThreadOnInbound('thread_123', 'Still there?');
 
     expect(shouldNotifyAdmin).toBe(true);
+  });
+
+  it('records the admin-notified timestamp when called directly', async () => {
+    const { recordAdminNotified } = await import('@/lib/services/sms-thread-service');
+    await recordAdminNotified('thread_123');
+
+    expect(threadDocUpdate).toHaveBeenCalledWith({
+      lastAdminNotifiedAt: { __type: 'serverTimestamp' },
+    });
   });
 
   it('marks a thread read by resetting unread count', async () => {
