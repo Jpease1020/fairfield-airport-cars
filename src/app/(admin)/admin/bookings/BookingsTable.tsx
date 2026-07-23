@@ -52,6 +52,7 @@ interface BookingsTableProps {
   bookings: Booking[];
   resendingId: string | null;
   cancellingId: string | null;
+  textingId: string | null;
   rejectionModalOpen: boolean;
   bookingToReject: Booking | null;
   rejectionReason: string;
@@ -66,12 +67,14 @@ interface BookingsTableProps {
   onDeleteBooking: (booking: Booking) => Promise<void>;
   onApproveException: (booking: Booking) => Promise<void>;
   onOpenRejectionModal: (booking: Booking) => void;
+  onTextCustomer: (booking: Booking) => Promise<void>;
 }
 
 export function BookingsTable({
   bookings,
   resendingId,
   cancellingId,
+  textingId,
   rejectionModalOpen,
   bookingToReject,
   rejectionReason,
@@ -86,6 +89,7 @@ export function BookingsTable({
   onDeleteBooking,
   onApproveException,
   onOpenRejectionModal,
+  onTextCustomer,
 }: BookingsTableProps) {
   if (bookings.length === 0) {
     return (
@@ -174,6 +178,15 @@ export function BookingsTable({
                       <Link href={`/booking/${booking.id}`}>
                         <Button size="sm" variant="outline" text="View" />
                       </Link>
+                      {getCustomerPhone(booking) && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => onTextCustomer(booking)}
+                          disabled={textingId === booking.id}
+                          text={textingId === booking.id ? 'Opening…' : '💬 Text'}
+                        />
+                      )}
                       {booking.status !== 'cancelled' && (
                         <Button
                           size="sm"

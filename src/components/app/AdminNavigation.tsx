@@ -35,6 +35,7 @@ export const AdminNavigation: React.FC = () => {
     { name: 'Bookings', href: '/admin/bookings', current: currentPath === '/admin/bookings' },
     { name: 'Payments', href: '/admin/payments', current: currentPath === '/admin/payments' },
     { name: 'Messages', href: '/admin/messages', current: currentPath.startsWith('/admin/messages') },
+    { name: 'Marketing', href: '/admin/marketing/sms', current: currentPath.startsWith('/admin/marketing') },
     { name: 'Pricing', href: '/admin/pricing', current: currentPath === '/admin/pricing' },
     { name: 'Costs', href: '/admin/costs', current: currentPath === '/admin/costs' },
     // 'Campaigns' removed: /admin/campaigns has no page (Next prefetched it -> 404).

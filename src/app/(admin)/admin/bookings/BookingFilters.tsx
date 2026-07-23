@@ -2,12 +2,24 @@
 
 import { Input } from '@/design/ui';
 import { AIRPORTS, FilterBar, FilterButton } from './bookings-styles';
+import { getPickupDateTime, parseDate } from './bookings-utils';
 import type { Booking } from '@/lib/services/database-service';
+
+const countByTimeWindow = (bookings: Booking[], window: 'upcoming' | 'past'): number => {
+  const now = new Date();
+  return bookings.filter((b) => {
+    const pickup = parseDate(getPickupDateTime(b));
+    if (!pickup) return false;
+    return window === 'upcoming' ? pickup >= now : pickup < now;
+  }).length;
+};
 
 interface BookingFiltersProps {
   bookings: Booking[];
   selectedStatus: string;
   onStatusChange: (status: string) => void;
+  selectedTimeWindow: 'upcoming' | 'past' | 'all';
+  onTimeWindowChange: (window: 'upcoming' | 'past' | 'all') => void;
   selectedAirport: string;
   onAirportChange: (airport: string) => void;
   searchQuery: string;
@@ -22,6 +34,8 @@ export function BookingFilters({
   bookings,
   selectedStatus,
   onStatusChange,
+  selectedTimeWindow,
+  onTimeWindowChange,
   selectedAirport,
   onAirportChange,
   searchQuery,
@@ -32,6 +46,18 @@ export function BookingFilters({
   onEndDateChange,
 }: BookingFiltersProps) {
   return (
+    <>
+    <FilterBar>
+      <FilterButton $active={selectedTimeWindow === 'upcoming'} onClick={() => onTimeWindowChange('upcoming')}>
+        Upcoming ({countByTimeWindow(bookings, 'upcoming')})
+      </FilterButton>
+      <FilterButton $active={selectedTimeWindow === 'past'} onClick={() => onTimeWindowChange('past')}>
+        Past ({countByTimeWindow(bookings, 'past')})
+      </FilterButton>
+      <FilterButton $active={selectedTimeWindow === 'all'} onClick={() => onTimeWindowChange('all')}>
+        All Dates
+      </FilterButton>
+    </FilterBar>
     <FilterBar>
       <FilterButton $active={selectedStatus === 'all'} onClick={() => onStatusChange('all')}>
         All ({bookings.length})
@@ -71,5 +97,6 @@ export function BookingFilters({
       <Input type="date" value={startDate} onChange={(e) => onStartDateChange(e.target.value)} aria-label="Start date" />
       <Input type="date" value={endDate} onChange={(e) => onEndDateChange(e.target.value)} aria-label="End date" />
     </FilterBar>
+    </>
   );
 }

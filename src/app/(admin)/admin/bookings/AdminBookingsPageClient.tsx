@@ -26,6 +26,7 @@ export default function AdminBookingsPageClient() {
         <BookingFilters
           bookings={b.bookings}
           selectedStatus={b.selectedStatus} onStatusChange={b.setSelectedStatus}
+          selectedTimeWindow={b.selectedTimeWindow} onTimeWindowChange={b.setSelectedTimeWindow}
           selectedAirport={b.selectedAirport} onAirportChange={b.setSelectedAirport}
           searchQuery={b.searchQuery} onSearchChange={b.setSearchQuery}
           startDate={b.startDate} onStartDateChange={b.setStartDate}
@@ -34,7 +35,7 @@ export default function AdminBookingsPageClient() {
         <BookingsCount>Showing {b.filteredBookings.length} booking{b.filteredBookings.length !== 1 ? 's' : ''}</BookingsCount>
         <BookingsTable
           bookings={b.filteredBookings}
-          resendingId={b.resendingId} cancellingId={b.cancellingId}
+          resendingId={b.resendingId} cancellingId={b.cancellingId} textingId={b.textingId}
           rejectionModalOpen={b.rejectionModalOpen} bookingToReject={b.bookingToReject}
           rejectionReason={b.rejectionReason} onRejectionReasonChange={b.setRejectionReason}
           rejectionReasonType={b.rejectionReasonType} onRejectionReasonTypeChange={b.setRejectionReasonType}
@@ -42,6 +43,7 @@ export default function AdminBookingsPageClient() {
           onStatusUpdate={b.actions.handleStatusUpdate} onResendConfirmation={b.actions.handleResendConfirmation}
           onCancelBooking={b.actions.handleCancelBooking} onDeleteBooking={b.actions.handleDeleteBooking}
           onApproveException={b.actions.handleApproveException} onOpenRejectionModal={b.actions.openRejectionModal}
+          onTextCustomer={b.actions.handleTextCustomer}
         />
       </PageContainer>
     </Container>
