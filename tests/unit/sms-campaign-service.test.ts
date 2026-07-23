@@ -29,6 +29,21 @@ describe('sms-campaign-service', () => {
     expect(result.recipients[0]?.name).toBe('Opted In New');
   });
 
+  it('does not let an older opted-in booking resurrect consent after a newer booking opts out (regression)', () => {
+    // Newest-created booking processed first (matches production query order: createdAt desc).
+    const bookingsNewestFirst = [
+      { customer: { name: 'Jane', phone: '+12035551234', smsOptIn: false }, createdAt: '2026-03-03T12:00:00.000Z' },
+      { customer: { name: 'Jane', phone: '+12035551234', smsOptIn: true }, createdAt: '2026-01-01T12:00:00.000Z' },
+    ];
+    expect(buildSmsCampaignPreflight(bookingsNewestFirst).optedInContacts).toBe(0);
+    expect(buildContactDirectory(bookingsNewestFirst).contacts[0]).toMatchObject({ optedIn: false });
+
+    // Same data, opposite array order — result must not depend on processing order.
+    const bookingsOldestFirst = [...bookingsNewestFirst].reverse();
+    expect(buildSmsCampaignPreflight(bookingsOldestFirst).optedInContacts).toBe(0);
+    expect(buildContactDirectory(bookingsOldestFirst).contacts[0]).toMatchObject({ optedIn: false });
+  });
+
   it('counts invalid and missing phones in preflight', () => {
     const bookings = [
       { customer: { name: 'Missing Phone', phone: '', smsOptIn: true }, createdAt: '2026-03-03T12:00:00.000Z' },
