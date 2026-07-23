@@ -62,6 +62,7 @@ describe('POST /api/notifications/send-confirmation', () => {
     expect(mockSendSms).toHaveBeenCalledWith({
       to: '+15555550123',
       body: expect.stringContaining('3/2/2026, 8:00 AM'),
+      customerFacing: true,
     });
     expect(mockSendConfirmationEmail).toHaveBeenCalledTimes(1);
   });
@@ -92,6 +93,7 @@ describe('POST /api/notifications/send-confirmation', () => {
     expect(mockSendSms).toHaveBeenCalledWith({
       to: '+15555550999',
       body: expect.stringContaining('3/2/2026, 8:00 AM'),
+      customerFacing: true,
     });
     expect(mockSendSms).not.toHaveBeenCalledWith(
       expect.objectContaining({ body: expect.stringContaining('1:00 PM') })

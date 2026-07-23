@@ -190,6 +190,7 @@ describe('POST /api/payment/process-payment', () => {
     expect(mockSendSms).toHaveBeenCalledWith({
       to: '+15555550123',
       body: expect.stringContaining('1/1/2028, 10:00 AM'),
+      customerFacing: true,
     });
   });
 

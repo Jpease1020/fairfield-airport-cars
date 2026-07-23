@@ -588,6 +588,7 @@ export async function createPaidBookingAndNotify(
         await sendSms({
           to: bookingData.customer.phone,
           body: smsMessage,
+          customerFacing: true,
         });
       }
     }

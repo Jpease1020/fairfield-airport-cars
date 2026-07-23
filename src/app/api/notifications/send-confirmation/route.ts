@@ -34,7 +34,7 @@ export async function POST(request: Request) {
     const messageBody = `Thank you for booking with ${APP_CONFIG.name}! Your ride is confirmed.\nPickup time: ${pickupDateTimeText}\nRoute: ${pickupAddress} -> ${dropoffAddress}`;
 
     await Promise.all([
-      booking.phone ? sendSms({ to: booking.phone, body: messageBody }) : Promise.resolve(),
+      booking.phone ? sendSms({ to: booking.phone, body: messageBody, customerFacing: true }) : Promise.resolve(),
       sendConfirmationEmail(adaptOldBookingToNew(booking)),
     ]);
 

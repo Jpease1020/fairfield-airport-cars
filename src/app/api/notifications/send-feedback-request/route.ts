@@ -29,6 +29,7 @@ export async function POST(request: Request) {
       await sendSms({
         to: booking.phone,
         body: messageBody,
+        customerFacing: true,
       });
     }
 

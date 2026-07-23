@@ -8,6 +8,19 @@ const messagingServiceSid = process.env.TWILIO_MESSAGING_SERVICE_SID;
 
 const getTwilioClient = () => twilio(accountSid, authToken);
 
+// Our registered A2P 10DLC campaign's sample messages (Twilio/carrier compliance) all include
+// this line — customer-facing sends must match, even though Twilio enforces STOP regardless of
+// message content. Not applied to OTP codes or internal admin notifications (not customer
+// marketing/relationship messaging, and STOP-language on a 2FA code would be unusual UX).
+const appendOptOutNotice = (body: string): string => {
+  // Matches the actual "reply STOP" instruction pattern, not the bare word "stop" — admin
+  // replies are freeform text from Gregg (e.g. "I'll stop by at 5") that would otherwise
+  // false-positive and silently skip the compliance line entirely.
+  const hasOptOut = /reply\s+stop\b|\b(opt\s*out|unsubscribe)\b/i.test(body);
+  if (hasOptOut) return body;
+  return `${body} Reply STOP to opt out.`;
+};
+
 interface SmsPayload {
   to: string;
   body: string;
@@ -16,6 +29,7 @@ interface SmsPayload {
   senderType?: SmsSenderType;
   bookingId?: string;
   customerId?: string;
+  customerFacing?: boolean;
 }
 
 export const sendSms = async ({
@@ -26,16 +40,19 @@ export const sendSms = async ({
   senderType,
   bookingId,
   customerId,
+  customerFacing = false,
 }: SmsPayload) => {
   if (!accountSid || !authToken || !messagingServiceSid) {
     console.error('Twilio credentials are not configured. Required: TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_MESSAGING_SERVICE_SID');
     throw new Error('Twilio service is not configured.');
   }
 
+  const outboundBody = customerFacing ? appendOptOutNotice(body) : body;
+
   try {
     const client = getTwilioClient();
     const message = await client.messages.create({
-      body,
+      body: outboundBody,
       messagingServiceSid: messagingServiceSid,
       to,
     });
@@ -44,7 +61,7 @@ export const sendSms = async ({
         await saveSmsMessage({
           from: twilioPhoneNumber || 'system',
           to,
-          body,
+          body: outboundBody,
           direction: 'outbound',
           twilioMessageSid: message.sid,
           threadId,
@@ -102,12 +119,6 @@ export const normalizePhoneToE164 = (rawPhone: string): string => {
     throw new Error('Invalid phone number');
   }
   return normalizedPhone;
-};
-
-const appendOptOutNotice = (body: string): string => {
-  const hasOptOut = /\b(stop|opt\s*out|unsubscribe)\b/i.test(body);
-  if (hasOptOut) return body;
-  return `${body} Reply STOP to opt out.`;
 };
 
 /**

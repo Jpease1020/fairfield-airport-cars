@@ -294,6 +294,7 @@ describe('POST /api/booking/cancel-booking', () => {
     expect(mockSendSms).toHaveBeenCalledWith({
       to: '+15555550123',
       body: expect.stringContaining('3/2/2026, 8:00 AM'),
+      customerFacing: true,
     });
 
     // Customer email sent

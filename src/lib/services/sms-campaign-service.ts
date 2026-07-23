@@ -118,14 +118,13 @@ function dedupeContactsByPhone(
 
     const existingDate = existing.lastBookingDate?.getTime() ?? 0;
     const nextDate = bookingDate?.getTime() ?? 0;
+    // The most recent booking's opt-in choice always wins — an older booking's smsOptIn must
+    // never resurrect consent after a customer has since opted out on a newer booking.
     if (nextDate >= existingDate) {
       existing.name = name;
       existing.phone = rawPhone;
       existing.lastBookingDate = bookingDate;
       existing.smsOptIn = smsOptIn;
-    } else if (smsOptIn) {
-      // Preserve affirmative consent from any booking unless a later booking explicitly opts out.
-      existing.smsOptIn = true;
     }
   }
 

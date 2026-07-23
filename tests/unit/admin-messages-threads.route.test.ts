@@ -127,6 +127,7 @@ describe('admin SMS thread routes', () => {
       body: 'Yes, I can do that.',
       threadId: 'thread_1',
       senderType: 'admin',
+      customerFacing: true,
     });
     expect(mockUpdateThreadOnOutbound).toHaveBeenCalledWith('thread_1', 'Yes, I can do that.');
   });
