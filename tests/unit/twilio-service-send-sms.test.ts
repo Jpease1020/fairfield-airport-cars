@@ -85,6 +85,23 @@ describe('sendSms opt-out notice', () => {
     );
   });
 
+  it('appends the notice even when the body contains "stop" outside an opt-out instruction (regression)', async () => {
+    mockMessagesCreate.mockResolvedValue({ sid: 'SM127' });
+    const { sendSms } = await import('@/lib/services/twilio-service');
+
+    await sendSms({
+      to: '+12035551234',
+      body: "I'll stop by around 5pm to grab you.",
+      customerFacing: true,
+    });
+
+    expect(mockMessagesCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        body: "I'll stop by around 5pm to grab you. Reply STOP to opt out.",
+      })
+    );
+  });
+
   it('logs the actual sent body (with the notice appended), not the original', async () => {
     mockMessagesCreate.mockResolvedValue({ sid: 'SM126' });
     const { sendSms } = await import('@/lib/services/twilio-service');

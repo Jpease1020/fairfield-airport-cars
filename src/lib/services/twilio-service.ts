@@ -13,7 +13,10 @@ const getTwilioClient = () => twilio(accountSid, authToken);
 // message content. Not applied to OTP codes or internal admin notifications (not customer
 // marketing/relationship messaging, and STOP-language on a 2FA code would be unusual UX).
 const appendOptOutNotice = (body: string): string => {
-  const hasOptOut = /\b(stop|opt\s*out|unsubscribe)\b/i.test(body);
+  // Matches the actual "reply STOP" instruction pattern, not the bare word "stop" — admin
+  // replies are freeform text from Gregg (e.g. "I'll stop by at 5") that would otherwise
+  // false-positive and silently skip the compliance line entirely.
+  const hasOptOut = /reply\s+stop\b|\b(opt\s*out|unsubscribe)\b/i.test(body);
   if (hasOptOut) return body;
   return `${body} Reply STOP to opt out.`;
 };
