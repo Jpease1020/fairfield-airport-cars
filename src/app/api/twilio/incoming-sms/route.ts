@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import twilio from 'twilio';
 import { sendSms } from '@/lib/services/twilio-service';
 import { saveSmsMessage } from '@/lib/services/sms-message-service';
-import { findOrCreateThread, updateThreadOnInbound } from '@/lib/services/sms-thread-service';
+import { findOrCreateThread, updateThreadOnInbound, recordAdminNotified } from '@/lib/services/sms-thread-service';
 
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const forwardToNumber = process.env.GREGG_SMS_FORWARD_NUMBER || process.env.ADMIN_FORWARD_SMS_TO;
@@ -71,6 +71,9 @@ export async function POST(request: NextRequest) {
         threadId ? `${baseUrl}/admin/messages/${threadId}` : `${baseUrl}/admin/messages`
       }`;
       await sendSms({ to: forwardToNumber, body: forwardBody, logMessage: false });
+      if (threadId) {
+        await recordAdminNotified(threadId);
+      }
     } catch (err) {
       console.error('[Twilio webhook] Failed to forward to Gregg:', err);
     }

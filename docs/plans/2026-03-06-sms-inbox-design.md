@@ -51,6 +51,7 @@ interface SmsThread {
   unreadCount: number;           // incremented on inbound, reset on Gregg opening thread
   lastInboundAt?: Timestamp;
   lastOutboundAt?: Timestamp;
+  lastAdminNotifiedAt?: Timestamp; // last time a forward SMS was sent to Gregg's phone
   createdAt: Timestamp;
   updatedAt: Timestamp;
 }
@@ -86,7 +87,7 @@ Old messages without `threadId` remain as historical flat log. No migration need
 2. Find `smsThread` by `customerPhone` or create one
 3. Save message to `smsMessages` with `threadId`, `senderType: 'customer'`
 4. Update thread metadata (`lastMessageAt`, `lastMessagePreview`, `unreadCount += 1`)
-5. Send notification SMS to Gregg: `"New message from [phone]: '[preview]' Reply: [domain]/admin/messages/[threadId]"`
+5. Send notification SMS to Gregg unless one was already sent for this thread within the last 60s (`lastAdminNotifiedAt` cooldown — independent of `unreadCount`/dashboard read state, so a thread Gregg never opens in the web dashboard keeps forwarding): `"New message from [phone]: '[preview]' Reply: [domain]/admin/messages/[threadId]"`
 6. Return TwiML `<Response></Response>`
 
 ### Reply endpoint
@@ -147,7 +148,7 @@ One-time login on his phone. Link from notification SMS lands directly on the th
 
 ## Notification SMS
 
-Sent to `GREGG_SMS_FORWARD_NUMBER` (existing env var) on every inbound customer message:
+Sent to `GREGG_SMS_FORWARD_NUMBER` (existing env var) on inbound customer messages, throttled to at most one per thread per 60s (`lastAdminNotifiedAt`) — this is independent of the dashboard's `unreadCount`/read state, so threads Gregg never opens in the web dashboard still keep forwarding:
 
 ```
 New message from (203) 555-1234: "Hey, can you pick me up at..."

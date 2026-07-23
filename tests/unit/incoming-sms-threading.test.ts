@@ -17,16 +17,18 @@ vi.mock('@/lib/services/sms-message-service', () => ({
 vi.mock('@/lib/services/sms-thread-service', () => ({
   findOrCreateThread: vi.fn().mockResolvedValue({ threadId: 'thread_abc', created: false }),
   updateThreadOnInbound: vi.fn().mockResolvedValue(true),
+  recordAdminNotified: vi.fn().mockResolvedValue(undefined),
 }));
 
 import { sendSms } from '@/lib/services/twilio-service';
 import { saveSmsMessage } from '@/lib/services/sms-message-service';
-import { findOrCreateThread, updateThreadOnInbound } from '@/lib/services/sms-thread-service';
+import { findOrCreateThread, updateThreadOnInbound, recordAdminNotified } from '@/lib/services/sms-thread-service';
 
 const mockSendSms = sendSms as unknown as ReturnType<typeof vi.fn>;
 const mockSaveSmsMessage = saveSmsMessage as unknown as ReturnType<typeof vi.fn>;
 const mockFindOrCreateThread = findOrCreateThread as unknown as ReturnType<typeof vi.fn>;
 const mockUpdateThreadOnInbound = updateThreadOnInbound as unknown as ReturnType<typeof vi.fn>;
+const mockRecordAdminNotified = recordAdminNotified as unknown as ReturnType<typeof vi.fn>;
 
 let POST: typeof import('@/app/api/twilio/incoming-sms/route').POST;
 
@@ -75,6 +77,31 @@ describe('POST /api/twilio/incoming-sms (threading)', () => {
         body: expect.stringContaining('/admin/messages/thread_abc'),
       })
     );
+    expect(mockRecordAdminNotified).toHaveBeenCalledWith('thread_abc');
+  });
+
+  it('does not record the notification when the forward SMS to Gregg fails', async () => {
+    mockSendSms.mockRejectedValueOnce(new Error('Twilio API error'));
+
+    const response = await POST(
+      new Request('https://www.fairfieldairportcar.com/api/twilio/incoming-sms', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'x-twilio-signature': 'valid-signature',
+        },
+        body: new URLSearchParams({
+          From: '+12035550123',
+          To: '+16462216370',
+          Body: 'Are you there?',
+          MessageSid: 'SM125',
+        }).toString(),
+      }) as any
+    );
+
+    expect(response.status).toBe(200);
+    expect(mockSendSms).toHaveBeenCalled();
+    expect(mockRecordAdminNotified).not.toHaveBeenCalled();
   });
 
   it('does not notify Gregg again when the thread already has unread messages', async () => {
@@ -104,5 +131,6 @@ describe('POST /api/twilio/incoming-sms (threading)', () => {
       })
     );
     expect(mockSendSms).not.toHaveBeenCalled();
+    expect(mockRecordAdminNotified).not.toHaveBeenCalled();
   });
 });

@@ -121,7 +121,7 @@ describe('sms-thread-service', () => {
     );
   });
 
-  it('updates inbound thread metadata, increments unread count, and returns true for first unread message', async () => {
+  it('updates inbound thread metadata, increments unread count, and reports notify-worthy when never notified before', async () => {
     threadDocGet.mockResolvedValue({
       exists: true,
       data: () => ({ unreadCount: 0 }),
@@ -136,19 +136,66 @@ describe('sms-thread-service', () => {
         unreadCount: { __type: 'increment', amount: 1 },
       })
     );
+    // lastAdminNotifiedAt is recorded separately via recordAdminNotified, only after a
+    // successful forward — never written here, so a failed send can't suppress a retry.
+    expect(threadDocUpdate).toHaveBeenCalledWith(
+      expect.not.objectContaining({ lastAdminNotifiedAt: expect.anything() })
+    );
     expect(shouldNotifyAdmin).toBe(true);
   });
 
-  it('suppresses repeated admin notifications when thread already has unread messages', async () => {
+  it('still notifies admin on a second unread message, since forwarding no longer depends on unread count', async () => {
     threadDocGet.mockResolvedValue({
       exists: true,
-      data: () => ({ unreadCount: 2 }),
+      data: () => ({ unreadCount: 2, lastAdminNotifiedAt: null }),
     });
 
     const { updateThreadOnInbound } = await import('@/lib/services/sms-thread-service');
     const shouldNotifyAdmin = await updateThreadOnInbound('thread_123', 'Following up on my last message');
 
+    expect(shouldNotifyAdmin).toBe(true);
+  });
+
+  it('suppresses admin notification when one was already sent within the cooldown window', async () => {
+    threadDocGet.mockResolvedValue({
+      exists: true,
+      data: () => ({
+        unreadCount: 2,
+        lastAdminNotifiedAt: { toDate: () => new Date(Date.now() - 5_000) },
+      }),
+    });
+
+    const { updateThreadOnInbound } = await import('@/lib/services/sms-thread-service');
+    const shouldNotifyAdmin = await updateThreadOnInbound('thread_123', 'Following up again');
+
+    expect(threadDocUpdate).toHaveBeenCalledWith(
+      expect.not.objectContaining({ lastAdminNotifiedAt: expect.anything() })
+    );
     expect(shouldNotifyAdmin).toBe(false);
+  });
+
+  it('notifies admin again once the cooldown window has passed', async () => {
+    threadDocGet.mockResolvedValue({
+      exists: true,
+      data: () => ({
+        unreadCount: 3,
+        lastAdminNotifiedAt: { toDate: () => new Date(Date.now() - 120_000) },
+      }),
+    });
+
+    const { updateThreadOnInbound } = await import('@/lib/services/sms-thread-service');
+    const shouldNotifyAdmin = await updateThreadOnInbound('thread_123', 'Still there?');
+
+    expect(shouldNotifyAdmin).toBe(true);
+  });
+
+  it('records the admin-notified timestamp when called directly', async () => {
+    const { recordAdminNotified } = await import('@/lib/services/sms-thread-service');
+    await recordAdminNotified('thread_123');
+
+    expect(threadDocUpdate).toHaveBeenCalledWith({
+      lastAdminNotifiedAt: { __type: 'serverTimestamp' },
+    });
   });
 
   it('marks a thread read by resetting unread count', async () => {
