@@ -36,6 +36,7 @@ export async function POST(request: NextRequest) {
       body: trimmedBody,
       threadId,
       senderType: 'admin',
+      customerFacing: true,
     });
 
     await updateThreadOnOutbound(threadId, trimmedBody);

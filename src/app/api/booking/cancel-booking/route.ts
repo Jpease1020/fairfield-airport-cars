@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
     } else {
       // Send SMS and email (push removed)
       await Promise.all([
-        phone ? sendSms({ to: phone, body: messageBody }) : Promise.resolve(),
+        phone ? sendSms({ to: phone, body: messageBody, customerFacing: true }) : Promise.resolve(),
         email ? sendConfirmationEmail(adaptOldBookingToNew({ ...booking, status: 'cancelled', updatedAt: new Date(), cancellationFee })) : Promise.resolve(),
       ]);
 
