@@ -9,6 +9,10 @@ const schema = z.object({
       z.object({
         phone: z.string().min(1),
         name: z.string().optional().default(''),
+        // Client-reported opt-in status at send time (from the contact directory the admin
+        // reviewed) — recorded here so there's a server-side account of the decision made,
+        // since this endpoint deliberately allows sending to non-opted-in numbers.
+        optedIn: z.boolean().optional().default(false),
       })
     )
     .min(1),
@@ -29,13 +33,18 @@ export async function POST(request: NextRequest) {
 
     const { recipients, messageTemplate, dryRun } = parsed.data;
     const normalizedRecipients = recipients.map((r) => ({ phone: r.phone, name: r.name || 'there' }));
+    const optedInCount = recipients.filter((r) => r.optedIn).length;
+    const notOptedInCount = recipients.length - optedInCount;
 
     if (dryRun) {
-      return NextResponse.json({ dryRun: true, recipientCount: normalizedRecipients.length });
+      return NextResponse.json({ dryRun: true, recipientCount: normalizedRecipients.length, optedInCount, notOptedInCount });
     }
 
     const sendResult = await sendSmsToList(normalizedRecipients, messageTemplate);
-    return NextResponse.json({ success: true, sendResult });
+    console.log(
+      `[SMS Marketing] Sent to list: ${optedInCount} opted-in, ${notOptedInCount} not opted-in of ${recipients.length} total.`
+    );
+    return NextResponse.json({ success: true, sendResult, optedInCount, notOptedInCount });
   } catch (error) {
     console.error('Failed to send SMS to list:', error);
     const message = error instanceof Error ? error.message : 'Failed to send SMS campaign';

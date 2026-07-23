@@ -170,7 +170,7 @@ export default function AdminSmsMarketingPageClient() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          recipients: finalRecipients.map((r) => ({ phone: r.phone, name: r.name })),
+          recipients: finalRecipients.map((r) => ({ phone: r.phone, name: r.name, optedIn: r.optedIn === true })),
           messageTemplate: messageTemplate.trim(),
         }),
       });

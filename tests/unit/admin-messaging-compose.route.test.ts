@@ -97,8 +97,8 @@ describe('admin messaging compose routes', () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             recipients: [
-              { phone: '+12035551234', name: 'Opted In' },
-              { phone: '+12035550000', name: 'Not Opted In' },
+              { phone: '+12035551234', name: 'Opted In', optedIn: true },
+              { phone: '+12035550000', name: 'Not Opted In', optedIn: false },
             ],
             messageTemplate: 'Hey {{name}}, quick update from Fairfield Airport Cars.',
           }),
@@ -114,16 +114,19 @@ describe('admin messaging compose routes', () => {
       ],
       'Hey {{name}}, quick update from Fairfield Airport Cars.'
     );
+    const payload = await response.json();
+    expect(payload.optedInCount).toBe(1);
+    expect(payload.notOptedInCount).toBe(1);
   });
 
-  it('does not send when dryRun is true', async () => {
+  it('records opt-in counts on a dry run without sending', async () => {
     const response = asResponse(
       await sendToListRoute(
         new Request('http://localhost/api/admin/sms-campaign/send-to-list', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            recipients: [{ phone: '+12035551234', name: 'Opted In' }],
+            recipients: [{ phone: '+12035551234', name: 'Opted In', optedIn: true }],
             messageTemplate: 'Test',
             dryRun: true,
           }),
@@ -133,7 +136,7 @@ describe('admin messaging compose routes', () => {
 
     expect(response.status).toBe(200);
     const payload = await response.json();
-    expect(payload).toEqual({ dryRun: true, recipientCount: 1 });
+    expect(payload).toEqual({ dryRun: true, recipientCount: 1, optedInCount: 1, notOptedInCount: 0 });
     expect(mockSendSmsToList).not.toHaveBeenCalled();
   });
 });
