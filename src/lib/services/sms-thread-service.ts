@@ -4,6 +4,10 @@ import { getAdminDb } from '@/lib/utils/firebase-admin';
 const THREADS_COLLECTION = 'smsThreads';
 const MESSAGES_COLLECTION = 'smsMessages';
 
+// Forwarding Gregg's phone is independent of the admin dashboard's unread badge —
+// otherwise a thread he never opens in the dashboard stops forwarding after its first message.
+const ADMIN_NOTIFY_COOLDOWN_MS = 60_000;
+
 export interface SmsThread {
   id: string;
   customerPhone: string;
@@ -105,18 +109,29 @@ export async function findOrCreateThread(
 
 export async function updateThreadOnInbound(threadId: string, messageBody: string): Promise<boolean> {
   const db = getAdminDb();
-  const threadDoc = await db.collection(THREADS_COLLECTION).doc(threadId).get();
-  const currentUnreadCount = Number(threadDoc.data()?.unreadCount ?? 0);
+  const threadRef = db.collection(THREADS_COLLECTION).doc(threadId);
+  const threadDoc = await threadRef.get();
+  const lastAdminNotifiedAt = threadDoc.data()?.lastAdminNotifiedAt;
+  const lastNotifiedMs =
+    lastAdminNotifiedAt && typeof lastAdminNotifiedAt.toDate === 'function'
+      ? lastAdminNotifiedAt.toDate().getTime()
+      : 0;
+  const shouldNotifyAdmin = Date.now() - lastNotifiedMs > ADMIN_NOTIFY_COOLDOWN_MS;
 
-  await db.collection(THREADS_COLLECTION).doc(threadId).update({
+  const update: Record<string, unknown> = {
     lastMessageAt: FieldValue.serverTimestamp(),
     lastMessagePreview: toPreview(messageBody),
     lastInboundAt: FieldValue.serverTimestamp(),
     unreadCount: FieldValue.increment(1),
     updatedAt: FieldValue.serverTimestamp(),
-  });
+  };
+  if (shouldNotifyAdmin) {
+    update.lastAdminNotifiedAt = FieldValue.serverTimestamp();
+  }
 
-  return currentUnreadCount === 0;
+  await threadRef.update(update);
+
+  return shouldNotifyAdmin;
 }
 
 export async function updateThreadOnOutbound(threadId: string, messageBody: string): Promise<void> {
