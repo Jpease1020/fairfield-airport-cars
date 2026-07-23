@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import styled from 'styled-components';
 import { collection, limit, onSnapshot, orderBy, query } from 'firebase/firestore';
-import { Alert, Badge, Box, Button, Container, H1, LoadingSpinner, Stack, Text } from '@/design/ui';
+import { Alert, Badge, Box, Button, Container, H1, Input, LoadingSpinner, Modal, Stack, Text } from '@/design/ui';
 import { db } from '@/lib/utils/firebase';
 import { authFetch } from '@/lib/utils/auth-fetch';
 import { formatDateTimeNoSeconds } from '@/utils/formatting';
@@ -77,6 +77,11 @@ export default function AdminMessagesPageClient() {
   const [threads, setThreads] = useState<SmsThread[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [composeOpen, setComposeOpen] = useState(false);
+  const [composePhone, setComposePhone] = useState('');
+  const [composeName, setComposeName] = useState('');
+  const [composeSubmitting, setComposeSubmitting] = useState(false);
+  const [composeError, setComposeError] = useState<string | null>(null);
   const [backfillState, setBackfillState] = useState<{
     loading: boolean;
     summary: string | null;
@@ -217,14 +222,56 @@ export default function AdminMessagesPageClient() {
     }
   }
 
+  function openCompose() {
+    setComposePhone('');
+    setComposeName('');
+    setComposeError(null);
+    setComposeOpen(true);
+  }
+
+  function closeCompose() {
+    if (composeSubmitting) return;
+    setComposeOpen(false);
+  }
+
+  async function handleStartConversation() {
+    if (!composePhone.trim()) {
+      setComposeError('Phone number is required.');
+      return;
+    }
+    setComposeSubmitting(true);
+    setComposeError(null);
+    try {
+      const res = await authFetch('/api/admin/messages/threads/find-or-create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone: composePhone.trim(), name: composeName.trim() || undefined }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data?.error || 'Could not start conversation');
+      }
+      const data = await res.json();
+      setComposeOpen(false);
+      router.push(`/admin/messages/${data.threadId}`);
+    } catch (startError) {
+      setComposeError(startError instanceof Error ? startError.message : 'Could not start conversation');
+    } finally {
+      setComposeSubmitting(false);
+    }
+  }
+
   return (
     <Container maxWidth="lg" padding="xl">
       <Stack spacing="lg">
-        <Stack spacing="sm">
-          <H1>Messages</H1>
-          <Text color="secondary">
-            Gregg&apos;s SMS inbox. Open a thread to reply through the business number.
-          </Text>
+        <Stack direction="horizontal" justify="space-between" align="flex-start">
+          <Stack spacing="sm">
+            <H1>Messages</H1>
+            <Text color="secondary">
+              Gregg&apos;s SMS inbox. Open a thread to reply through the business number.
+            </Text>
+          </Stack>
+          <Button variant="primary" size="sm" text="+ New message" onClick={openCompose} />
         </Stack>
 
         {error && <Alert variant="error">{error}</Alert>}
@@ -301,6 +348,49 @@ export default function AdminMessagesPageClient() {
           </Stack>
         </Box>
       </Stack>
+
+      <Modal
+        isOpen={composeOpen}
+        onClose={closeCompose}
+        title="New message"
+        size="sm"
+        footer={
+          <Stack direction="horizontal" spacing="sm" justify="flex-end">
+            <Button variant="secondary" onClick={closeCompose} text="Cancel" disabled={composeSubmitting} />
+            <Button
+              variant="primary"
+              onClick={() => handleStartConversation()}
+              disabled={composeSubmitting}
+              text={composeSubmitting ? 'Starting…' : 'Start conversation'}
+            />
+          </Stack>
+        }
+      >
+        <Stack spacing="md">
+          <Text color="secondary">
+            Starts (or reopens) a conversation from the business number. You&apos;ll type the first message on the thread page.
+          </Text>
+          {composeError && <Alert variant="error">{composeError}</Alert>}
+          <Stack spacing="xs">
+            <Text variant="small" weight="medium">Phone number</Text>
+            <Input
+              type="tel"
+              value={composePhone}
+              onChange={(e) => setComposePhone(e.target.value)}
+              placeholder="(203) 555-1234"
+            />
+          </Stack>
+          <Stack spacing="xs">
+            <Text variant="small" weight="medium">Name (optional)</Text>
+            <Input
+              type="text"
+              value={composeName}
+              onChange={(e) => setComposeName(e.target.value)}
+              placeholder="Customer name"
+            />
+          </Stack>
+        </Stack>
+      </Modal>
     </Container>
   );
 }

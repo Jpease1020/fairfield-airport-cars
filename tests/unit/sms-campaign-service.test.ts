@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildSmsCampaignPreflight } from '@/lib/services/sms-campaign-service';
+import { buildContactDirectory, buildSmsCampaignPreflight } from '@/lib/services/sms-campaign-service';
 
 describe('sms-campaign-service', () => {
   it('includes only smsOptIn recipients and deduplicates by phone', () => {
@@ -55,5 +55,36 @@ describe('sms-campaign-service', () => {
     const result = buildSmsCampaignPreflight(bookings, { activeWithinDays: 30 });
     expect(result.optedInContacts).toBe(1);
     expect(result.recipients[0]?.name).toBe('Recent');
+  });
+});
+
+describe('buildContactDirectory', () => {
+  it('includes every deduplicated contact regardless of opt-in status', () => {
+    const bookings = [
+      { customer: { name: 'Opted In', phone: '(203) 555-1234', smsOptIn: true }, createdAt: '2026-03-03T12:00:00.000Z' },
+      { customer: { name: 'Not Opted In', phone: '+12035550000', smsOptIn: false }, createdAt: '2026-03-02T12:00:00.000Z' },
+    ];
+
+    const { contacts, scannedBookings } = buildContactDirectory(bookings);
+
+    expect(scannedBookings).toBe(2);
+    expect(contacts).toHaveLength(2);
+    expect(contacts.find((c) => c.phone === '+12035551234')).toMatchObject({ name: 'Opted In', optedIn: true });
+    expect(contacts.find((c) => c.phone === '+12035550000')).toMatchObject({ name: 'Not Opted In', optedIn: false });
+  });
+
+  it('excludes contacts with missing or invalid phone numbers, and sorts by most recent booking', () => {
+    const bookings = [
+      { customer: { name: 'No Phone', phone: '', smsOptIn: true }, createdAt: '2026-03-03T12:00:00.000Z' },
+      { customer: { name: 'Bad Phone', phone: 'abc', smsOptIn: true }, createdAt: '2026-03-03T12:00:00.000Z' },
+      { customer: { name: 'Older', phone: '+12035551111', smsOptIn: false }, createdAt: '2026-01-01T12:00:00.000Z' },
+      { customer: { name: 'Newer', phone: '+12035552222', smsOptIn: false }, createdAt: '2026-03-03T12:00:00.000Z' },
+    ];
+
+    const { contacts } = buildContactDirectory(bookings);
+
+    expect(contacts).toHaveLength(2);
+    expect(contacts[0].name).toBe('Newer');
+    expect(contacts[1].name).toBe('Older');
   });
 });

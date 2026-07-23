@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   deleteDocument,
   getAllBookings,
@@ -24,12 +25,17 @@ import {
 
 export function useBookings() {
   const { cmsData } = useCMSData();
+  const router = useRouter();
 
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
+  // Defaults to 'upcoming' — Gregg's day-to-day question is "what's coming up," and with no
+  // time-window filter the oldest-pickup-first sort put whatever stale/past booking existed at
+  // the very top of the page instead of his next ride.
+  const [selectedTimeWindow, setSelectedTimeWindow] = useState<'upcoming' | 'past' | 'all'>('upcoming');
   const [selectedAirport, setSelectedAirport] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [startDate, setStartDate] = useState<string>('');
@@ -146,6 +152,36 @@ export function useBookings() {
     } catch (err) {
       console.error('Error deleting booking:', err);
       setError('Failed to delete booking');
+    }
+  };
+
+  const [textingId, setTextingId] = useState<string | null>(null);
+
+  const handleTextCustomer = async (booking: Booking) => {
+    const phone = getCustomerPhone(booking);
+    if (!phone) {
+      setError('This booking has no customer phone number on file.');
+      return;
+    }
+
+    try {
+      setTextingId(booking.id!);
+      setError(null);
+      const res = await authFetch('/api/admin/messages/threads/find-or-create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone, name: getCustomerName(booking) }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data?.error || 'Could not start conversation');
+      }
+      const data = await res.json();
+      router.push(`/admin/messages/${data.threadId}`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not start conversation');
+    } finally {
+      setTextingId(null);
     }
   };
 
@@ -282,8 +318,17 @@ export function useBookings() {
       filtered = filtered.filter((b) => getAirportFromBooking(b) === selectedAirport);
     }
 
+    if (selectedTimeWindow !== 'all') {
+      const now = new Date();
+      filtered = filtered.filter((b) => {
+        const pickup = parseDate(getPickupDateTime(b));
+        if (!pickup) return false;
+        return selectedTimeWindow === 'upcoming' ? pickup >= now : pickup < now;
+      });
+    }
+
     return filtered;
-  }, [bookings, selectedStatus, searchQuery, startDate, endDate, selectedAirport]);
+  }, [bookings, selectedStatus, searchQuery, startDate, endDate, selectedAirport, selectedTimeWindow]);
 
   return {
     bookings,
@@ -294,6 +339,8 @@ export function useBookings() {
     stats,
     selectedStatus,
     setSelectedStatus,
+    selectedTimeWindow,
+    setSelectedTimeWindow,
     selectedAirport,
     setSelectedAirport,
     searchQuery,
@@ -304,6 +351,7 @@ export function useBookings() {
     setEndDate,
     resendingId,
     cancellingId,
+    textingId,
     rejectionModalOpen,
     bookingToReject,
     rejectionReason,
@@ -318,6 +366,7 @@ export function useBookings() {
       handleCancelBooking,
       handleDeleteBooking,
       handleApproveException,
+      handleTextCustomer,
       openRejectionModal,
     },
   };
